@@ -1,34 +1,46 @@
 
 "use client";
 
+import Image from 'next/image';
 import type { MugSelection } from '@/types';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { MUG_TYPES, THERMAL_MUG_OPTIONS } from '@/lib/constants';
-import { Coffee as CoffeeIcon, Leaf, Rocket } from 'lucide-react'; // Corrected Thermos to Rocket
+import { MUG_OPTIONS, THERMAL_MUG_CUSTOMIZATION_OPTIONS, findOption } from '@/lib/constants';
+import { cn } from '@/lib/utils';
+import { Coffee } from 'lucide-react';
 
 interface StepMugProps {
   mug: MugSelection;
   onChange: (mug: Partial<MugSelection>) => void;
 }
 
-const mugIcons = {
-  termica: <CoffeeIcon className="w-6 h-6" />,
-  ecologica: <Leaf className="w-6 h-6" />,
-  termo: <Rocket className="w-6 h-6" />
-};
-
 export function StepMug({ mug, onChange }: StepMugProps) {
+  const selectedMugTypeConfig = findOption(MUG_OPTIONS, mug.type);
+
+  const handleTypeChange = (newType: string) => {
+    const newTypeConfig = findOption(MUG_OPTIONS, newType);
+    onChange({
+      type: newType,
+      variation: newTypeConfig?.variations?.[0]?.value || '', // Default to first variation if available
+      termicaMarked: newType === 'termica' ? mug.termicaMarked ?? false : undefined,
+      termicaPhrase: newType === 'termica' ? mug.termicaPhrase : '',
+    });
+  };
+
+  const handleVariationChange = (newVariation: string) => {
+    onChange({ variation: newVariation });
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-2xl font-headline flex items-center gap-2">
-          <CoffeeIcon className="w-7 h-7 text-primary" /> Paso 3: Elige tu Taza
+          <Coffee className="w-7 h-7 text-primary" /> Paso 3: Elige tu Taza
         </CardTitle>
         <CardDescription>
-          Escoge la taza perfecta para disfrutar tu café.
+          Escoge la taza perfecta para disfrutar tu café. Selecciona el tipo y luego el diseño que más te guste.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -36,51 +48,78 @@ export function StepMug({ mug, onChange }: StepMugProps) {
           <Label className="text-lg font-medium">Tipo de Taza:</Label>
           <RadioGroup
             value={mug.type}
-            onValueChange={(value) => {
-              const newType = value as MugSelection['type'];
-              const resetOptions = newType !== 'termica' ? { termicaMarked: undefined, termicaPhrase: '' } : {};
-              onChange({ type: newType, ...resetOptions });
-            }}
+            onValueChange={handleTypeChange}
             className="grid grid-cols-1 sm:grid-cols-3 gap-4"
           >
-            {MUG_TYPES.map((type) => (
+            {MUG_OPTIONS.map((option) => (
               <Label
-                key={type.value}
-                htmlFor={`mug-${type.value}`}
-                className={`flex flex-col items-center justify-center space-y-2 border-2 p-4 rounded-lg cursor-pointer transition-all hover:border-primary ${mug.type === type.value ? 'border-primary bg-primary/10' : 'border-input-border'}`}
+                key={option.value}
+                htmlFor={`mug-type-${option.value}`}
+                className={cn(
+                  "flex flex-col items-center justify-center space-y-2 border-2 p-4 rounded-lg cursor-pointer transition-all hover:border-primary",
+                  mug.type === option.value ? 'border-primary bg-primary/10' : 'border-input-border'
+                )}
               >
-                 <RadioGroupItem value={type.value} id={`mug-${type.value}`} className="sr-only" />
-                 <div className="text-primary">{mugIcons[type.value]}</div>
-                <span>{type.label}</span>
+                <RadioGroupItem value={option.value} id={`mug-type-${option.value}`} className="sr-only" />
+                {option.icon && <option.icon className="w-6 h-6 text-primary" />}
+                <span>{option.label}</span>
               </Label>
             ))}
           </RadioGroup>
         </div>
 
-        {mug.type === 'termica' && (
-          <div className="space-y-4 animate-in fade-in duration-300">
-            <div className="space-y-2">
-              <Label className="text-lg font-medium">Personalización Taza Térmica:</Label>
-              <RadioGroup
-                value={mug.termicaMarked ? 'marcada' : 'sin_marcar'}
-                onValueChange={(value) => {
-                  const isMarked = value === 'marcada';
-                  onChange({ termicaMarked: isMarked, termicaPhrase: !isMarked ? '' : mug.termicaPhrase });
-                }}
-                className="flex flex-col sm:flex-row gap-4"
-              >
-                {THERMAL_MUG_OPTIONS.map(opt => (
-                   <Label
-                    key={opt.value}
-                    htmlFor={`thermal-${opt.value}`}
-                    className={`flex items-center space-x-2 border-2 p-3 rounded-lg cursor-pointer transition-all hover:border-primary ${ (mug.termicaMarked && opt.value === 'marcada') || (!mug.termicaMarked && opt.value === 'sin_marcar') ? 'border-primary bg-primary/10' : 'border-input-border'}`}
-                  >
-                    <RadioGroupItem value={opt.value} id={`thermal-${opt.value}`} />
-                    <span>{opt.label}</span>
-                  </Label>
-                ))}
-              </RadioGroup>
-            </div>
+        {selectedMugTypeConfig?.variations && selectedMugTypeConfig.variations.length > 0 && (
+          <div className="space-y-2 animate-in fade-in duration-300">
+            <Label className="text-lg font-medium">Diseño de {selectedMugTypeConfig.label}:</Label>
+            <RadioGroup
+              value={mug.variation}
+              onValueChange={handleVariationChange}
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+            >
+              {selectedMugTypeConfig.variations.map((variation) => (
+                <Label
+                  key={variation.value}
+                  htmlFor={`mug-variation-${variation.value}`}
+                  className={cn(
+                    "flex flex-col items-center justify-center space-y-2 border-2 p-3 rounded-lg cursor-pointer transition-all hover:border-primary",
+                    "aspect-square",
+                    mug.variation === variation.value ? 'border-primary bg-primary/10 ring-2 ring-primary' : 'border-input-border'
+                  )}
+                >
+                  <RadioGroupItem value={variation.value} id={`mug-variation-${variation.value}`} className="sr-only" />
+                  <Image src={variation.image} alt={variation.label} width={80} height={80} className="rounded-md object-cover" data-ai-hint={variation.dataAiHint} />
+                  <span className="text-xs text-center">{variation.label}</span>
+                </Label>
+              ))}
+            </RadioGroup>
+          </div>
+        )}
+
+        {selectedMugTypeConfig?.isPersonalizable && mug.type === 'termica' && (
+          <div className="space-y-4 animate-in fade-in duration-300 pt-4 border-t mt-6">
+            <Label className="text-lg font-medium">Personalización Taza Térmica:</Label>
+            <RadioGroup
+              value={mug.termicaMarked ? 'marcada' : 'sin_marcar'}
+              onValueChange={(value) => {
+                const isMarked = value === 'marcada';
+                onChange({ termicaMarked: isMarked, termicaPhrase: !isMarked ? '' : mug.termicaPhrase });
+              }}
+              className="flex flex-col sm:flex-row gap-4"
+            >
+              {THERMAL_MUG_CUSTOMIZATION_OPTIONS.map(opt => (
+                 <Label
+                  key={opt.value}
+                  htmlFor={`thermal-${opt.value}`}
+                  className={cn(
+                    "flex items-center space-x-2 border-2 p-3 rounded-lg cursor-pointer transition-all hover:border-primary",
+                    (mug.termicaMarked && opt.value === 'marcada') || (!mug.termicaMarked && opt.value === 'sin_marcar') ? 'border-primary bg-primary/10' : 'border-input-border'
+                  )}
+                >
+                  <RadioGroupItem value={opt.value} id={`thermal-${opt.value}`} />
+                  <span>{opt.label}</span>
+                </Label>
+              ))}
+            </RadioGroup>
 
             {mug.termicaMarked && (
               <div className="space-y-2 animate-in fade-in duration-300">

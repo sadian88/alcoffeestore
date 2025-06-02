@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { KitConfig } from '@/types';
@@ -6,7 +7,14 @@ import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useToast } from '@/hooks/use-toast';
 import { ShoppingCart, RotateCcw, Sparkles, Package, Puzzle, Coffee as CoffeeIcon } from 'lucide-react';
-import { PACKAGING_COLORS, COFFEE_SIZES, ADDON_TYPES, MUG_TYPES } from '@/lib/constants';
+import { 
+  PACKAGING_COLORS, 
+  COFFEE_SIZES, 
+  MUG_OPTIONS, 
+  ADDON_OPTIONS,
+  findOption,
+  findVariation
+} from '@/lib/constants';
 
 interface OrderSummaryProps {
   kitConfig: KitConfig;
@@ -19,28 +27,63 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }
   const { addToCart } = useCartStore();
   const { toast } = useToast();
 
+  const getOptionLabel = (options: {value: string; label: string}[], value?: string) => options.find(opt => opt.value === value)?.label || 'No seleccionado';
+
+  const getDisplayableSelection = (itemType: 'mug' | 'addon') => {
+    const selection = itemType === 'mug' ? kitConfig.mug : kitConfig.addon;
+    const configOptions = itemType === 'mug' ? MUG_OPTIONS : ADDON_OPTIONS;
+
+    if (!selection.type) return '...';
+    
+    const typeConfig = findOption(configOptions, selection.type);
+    let label = typeConfig?.label || 'No seleccionado';
+
+    if (selection.variation) {
+      const variationConfig = findVariation(typeConfig, selection.variation);
+      if (variationConfig) {
+        label += `, ${variationConfig.label}`;
+      }
+    }
+    return label;
+  };
+
+
   const handleAddToCart = () => {
-    // Basic validation: ensure essential parts are selected before adding to cart
+    const mugTypeConfig = findOption(MUG_OPTIONS, kitConfig.mug.type);
+    const addonTypeConfig = findOption(ADDON_OPTIONS, kitConfig.addon.type);
+
     if (!kitConfig.coffee.size || !kitConfig.coffee.packagingColor || !kitConfig.addon.type || !kitConfig.mug.type) {
-      toast({
-        title: "Kit Incompleto",
-        description: "Por favor, completa todos los pasos para agregar el kit al carrito.",
-        variant: "destructive",
-      });
+      toast({ title: "Kit Incompleto", description: "Por favor, completa todos los pasos para agregar el kit al carrito.", variant: "destructive" });
+      return;
+    }
+    if (mugTypeConfig?.variations && mugTypeConfig.variations.length > 0 && !kitConfig.mug.variation) {
+      toast({ title: "Kit Incompleto", description: "Por favor, selecciona un diseño para tu taza.", variant: "destructive" });
+      return;
+    }
+    if (addonTypeConfig?.variations && addonTypeConfig.variations.length > 0 && !kitConfig.addon.variation) {
+      toast({ title: "Kit Incompleto", description: "Por favor, selecciona un diseño para tu complemento.", variant: "destructive" });
+      return;
+    }
+     if (addonTypeConfig?.requiresDescription && !kitConfig.addon.cuadroDescription) {
+      toast({ title: "Kit Incompleto", description: "Por favor, añade una descripción para el cuadro.", variant: "destructive" });
+      return;
+    }
+    if (mugTypeConfig?.isPersonalizable && kitConfig.mug.termicaMarked && !kitConfig.mug.termicaPhrase) {
+      toast({ title: "Kit Incompleto", description: "Por favor, añade una frase para tu taza térmica personalizada.", variant: "destructive" });
       return;
     }
 
-    const kitName = `Kit Personalizado ${new Date().toLocaleTimeString()}`;
+
+    const kitName = `Kit Personalizado ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     addToCart({ ...kitConfig, name: kitName, isPreset: false });
     toast({
       title: "¡Kit Agregado! 💖",
       description: `${kitName} ha sido añadido a tu carrito.`,
       className: "bg-primary/10 border-primary text-primary-foreground",
     });
-    onReset(); // Reset for a new kit
+    onReset();
   };
   
-  const getLabel = (options: {value: string; label: string}[], value?: string) => options.find(opt => opt.value === value)?.label || 'No seleccionado';
 
   const isKitEmpty = !kitConfig.coffee.size && !kitConfig.coffee.packagingColor && !kitConfig.addon.type && !kitConfig.mug.type;
 
@@ -59,14 +102,14 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }
           <>
             <div className="space-y-1 p-3 bg-secondary/30 rounded-md">
               <h4 className="font-semibold flex items-center gap-2"><Package className="w-4 h-4 text-secondary-foreground"/>Café:</h4>
-              <p>Tamaño: <span className="font-medium">{getLabel(COFFEE_SIZES, kitConfig.coffee.size) || '...'}</span></p>
-              <p>Empaque: <span className="font-medium">{getLabel(PACKAGING_COLORS, kitConfig.coffee.packagingColor) || '...'}</span></p>
+              <p>Tamaño: <span className="font-medium">{getOptionLabel(COFFEE_SIZES, kitConfig.coffee.size) || '...'}</span></p>
+              <p>Empaque: <span className="font-medium">{getOptionLabel(PACKAGING_COLORS, kitConfig.coffee.packagingColor) || '...'}</span></p>
               {currentStep !== 1 && <Button variant="link" size="sm" className="p-0 h-auto text-xs" onClick={() => navigateToStep(1)}>Editar Café</Button>}
             </div>
 
             <div className="space-y-1 p-3 bg-secondary/30 rounded-md">
               <h4 className="font-semibold flex items-center gap-2"><Puzzle className="w-4 h-4 text-secondary-foreground"/>Complemento:</h4>
-              <p>Tipo: <span className="font-medium">{getLabel(ADDON_TYPES, kitConfig.addon.type) || '...'}</span></p>
+              <p>Selección: <span className="font-medium">{getDisplayableSelection('addon')}</span></p>
               {kitConfig.addon.type === 'cuadro' && kitConfig.addon.cuadroDescription && (
                 <p>Descripción Cuadro: <span className="font-medium italic">"{kitConfig.addon.cuadroDescription}"</span></p>
               )}
@@ -75,10 +118,10 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }
 
             <div className="space-y-1 p-3 bg-secondary/30 rounded-md">
               <h4 className="font-semibold flex items-center gap-2"><CoffeeIcon className="w-4 h-4 text-secondary-foreground"/>Taza:</h4>
-              <p>Tipo: <span className="font-medium">{getLabel(MUG_TYPES, kitConfig.mug.type) || '...'}</span></p>
+              <p>Selección: <span className="font-medium">{getDisplayableSelection('mug')}</span></p>
               {kitConfig.mug.type === 'termica' && (
                 <>
-                  <p>Personalizada: <span className="font-medium">{kitConfig.mug.termicaMarked ? 'Sí' : 'No'}</span></p>
+                  <p>Personalizada: <span className="font-medium">{typeof kitConfig.mug.termicaMarked !== 'undefined' ? (kitConfig.mug.termicaMarked ? 'Sí' : 'No') : '...'}</span></p>
                   {kitConfig.mug.termicaMarked && kitConfig.mug.termicaPhrase && (
                     <p>Frase: <span className="font-medium italic">"{kitConfig.mug.termicaPhrase}"</span></p>
                   )}

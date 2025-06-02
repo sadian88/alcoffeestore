@@ -1,7 +1,11 @@
+
 export type CoffeeSize = '250g' | '150g';
 export type PackagingColor = 'blanco' | 'rosa' | 'dorado';
-export type AddonType = 'agenda' | 'cuadro' | 'cuchara';
-export type MugType = 'termica' | 'ecologica' | 'termo';
+
+// These specific string literal types for AddonType and MugType might become too restrictive
+// if we add many new types directly in components. Using string for more flexibility from constants.
+// export type AddonType = 'agenda' | 'cuadro' | 'cuchara';
+// export type MugType = 'termica' | 'ecologica' | 'termo';
 
 export interface CoffeeSelection {
   size: CoffeeSize | '';
@@ -9,26 +13,28 @@ export interface CoffeeSelection {
 }
 
 export interface AddonSelection {
-  type: AddonType | '';
+  type: string; // Main type like 'agenda', 'cuadro'
+  variation?: string; // Specific variation like 'agenda_rosa_floral' or color value
   cuadroDescription?: string;
 }
 
 export interface MugSelection {
-  type: MugType | '';
+  type: string; // Main type like 'termica', 'ecologica'
+  variation?: string; // Specific variation like 'termica_negra' or color value
   termicaMarked?: boolean;
   termicaPhrase?: string;
 }
 
 export interface KitConfig {
-  id?: string; // For items in cart
-  name?: string; // For preset kits or to identify custom kits
+  id?: string;
+  name?: string;
   coffee: CoffeeSelection;
   addon: AddonSelection;
   mug: MugSelection;
   isPreset?: boolean;
-  price?: number; 
-  image?: string; 
-  description?: string; // For preset kits primarily
+  price?: number;
+  image?: string;
+  description?: string;
 }
 
 export interface PresetKit extends KitConfig {
@@ -38,9 +44,12 @@ export interface PresetKit extends KitConfig {
   price: number;
   image: string;
   description: string;
+  // Ensure preset kits also define addon.variation and mug.variation if applicable
+  addon: AddonSelection & { type: 'agenda' | 'cuadro' | 'cuchara' }; // More specific for presets
+  mug: MugSelection & { type: 'termica' | 'ecologica' | 'termo' }; // More specific for presets
 }
 
 export interface CartItem extends KitConfig {
-  id: string; // Ensure cart items always have an ID
-  quantity: number; // If we want to allow quantity adjustments later
+  id: string;
+  quantity: number;
 }

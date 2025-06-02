@@ -1,26 +1,37 @@
+
 "use client";
 
+import Image from 'next/image';
 import type { AddonSelection } from '@/types';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ADDON_TYPES } from '@/lib/constants';
-import { Puzzle, BookOpen, Frame, Paperclip } from 'lucide-react';
+import { ADDON_OPTIONS, findOption } from '@/lib/constants';
+import { cn } from '@/lib/utils';
+import { Puzzle } from 'lucide-react';
 
 interface StepAddonProps {
   addon: AddonSelection;
   onChange: (addon: Partial<AddonSelection>) => void;
 }
 
-const addonIcons = {
-  agenda: <BookOpen className="w-6 h-6" />,
-  cuadro: <Frame className="w-6 h-6" />,
-  cuchara: <Paperclip className="w-6 h-6" />
-};
-
-
 export function StepAddon({ addon, onChange }: StepAddonProps) {
+  const selectedAddonTypeConfig = findOption(ADDON_OPTIONS, addon.type);
+
+  const handleTypeChange = (newType: string) => {
+    const newTypeConfig = findOption(ADDON_OPTIONS, newType);
+    onChange({
+      type: newType,
+      variation: newTypeConfig?.variations?.[0]?.value || '',
+      cuadroDescription: newType !== 'cuadro' ? '' : addon.cuadroDescription,
+    });
+  };
+
+  const handleVariationChange = (newVariation: string) => {
+    onChange({ variation: newVariation });
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -36,27 +47,55 @@ export function StepAddon({ addon, onChange }: StepAddonProps) {
           <Label className="text-lg font-medium">Selecciona tu Complemento:</Label>
           <RadioGroup
             value={addon.type}
-            onValueChange={(value) => {
-              onChange({ type: value as AddonSelection['type'], cuadroDescription: value !== 'cuadro' ? '' : addon.cuadroDescription });
-            }}
+            onValueChange={handleTypeChange}
             className="grid grid-cols-1 sm:grid-cols-3 gap-4"
           >
-            {ADDON_TYPES.map((type) => (
+            {ADDON_OPTIONS.map((option) => (
               <Label
-                key={type.value}
-                htmlFor={`addon-${type.value}`}
-                className={`flex flex-col items-center justify-center space-y-2 border-2 p-4 rounded-lg cursor-pointer transition-all hover:border-primary ${addon.type === type.value ? 'border-primary bg-primary/10' : 'border-input-border'}`}
+                key={option.value}
+                htmlFor={`addon-type-${option.value}`}
+                className={cn(
+                  "flex flex-col items-center justify-center space-y-2 border-2 p-4 rounded-lg cursor-pointer transition-all hover:border-primary",
+                  addon.type === option.value ? 'border-primary bg-primary/10' : 'border-input-border'
+                )}
               >
-                <RadioGroupItem value={type.value} id={`addon-${type.value}`} className="sr-only" />
-                <div className="text-primary">{addonIcons[type.value]}</div>
-                <span>{type.label}</span>
+                <RadioGroupItem value={option.value} id={`addon-type-${option.value}`} className="sr-only" />
+                {option.icon && <option.icon className="w-6 h-6 text-primary" />}
+                <span>{option.label}</span>
               </Label>
             ))}
           </RadioGroup>
         </div>
 
-        {addon.type === 'cuadro' && (
+        {selectedAddonTypeConfig?.variations && selectedAddonTypeConfig.variations.length > 0 && (
           <div className="space-y-2 animate-in fade-in duration-300">
+            <Label className="text-lg font-medium">Diseño de {selectedAddonTypeConfig.label}:</Label>
+            <RadioGroup
+              value={addon.variation}
+              onValueChange={handleVariationChange}
+              className="grid grid-cols-2 sm:grid-cols-3 gap-4"
+            >
+              {selectedAddonTypeConfig.variations.map((variation) => (
+                <Label
+                  key={variation.value}
+                  htmlFor={`addon-variation-${variation.value}`}
+                  className={cn(
+                    "flex flex-col items-center justify-center space-y-2 border-2 p-3 rounded-lg cursor-pointer transition-all hover:border-primary",
+                    "aspect-[4/5]", // Slightly taller for agenda images
+                    addon.variation === variation.value ? 'border-primary bg-primary/10 ring-2 ring-primary' : 'border-input-border'
+                  )}
+                >
+                  <RadioGroupItem value={variation.value} id={`addon-variation-${variation.value}`} className="sr-only" />
+                  <Image src={variation.image} alt={variation.label} width={80} height={100} className="rounded-md object-contain" data-ai-hint={variation.dataAiHint}/>
+                  <span className="text-xs text-center">{variation.label}</span>
+                </Label>
+              ))}
+            </RadioGroup>
+          </div>
+        )}
+
+        {selectedAddonTypeConfig?.requiresDescription && addon.type === 'cuadro' && (
+          <div className="space-y-2 animate-in fade-in duration-300 pt-4 border-t mt-6">
             <Label htmlFor="cuadroDescription" className="text-lg font-medium">Descripción para tu Cuadro:</Label>
             <Textarea
               id="cuadroDescription"
@@ -64,6 +103,7 @@ export function StepAddon({ addon, onChange }: StepAddonProps) {
               value={addon.cuadroDescription}
               onChange={(e) => onChange({ cuadroDescription: e.target.value })}
               className="min-h-[100px]"
+              maxLength={100}
             />
             <p className="text-xs text-muted-foreground">Máximo 100 caracteres.</p>
           </div>
