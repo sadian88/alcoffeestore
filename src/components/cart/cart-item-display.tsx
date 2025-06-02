@@ -8,12 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { X, Package, Puzzle, Coffee as CoffeeIcon } from 'lucide-react';
 import { 
   PRESET_KITS_DATA, 
-  PACKAGING_COLORS, 
-  COFFEE_SIZES, 
   MUG_OPTIONS, 
   ADDON_OPTIONS,
+  COFFEE_SIZES,
+  PACKAGING_COLORS,
   findOption,
-  findVariation
+  findVariation,
+  findPackagingColor
 } from '@/lib/constants';
 
 
@@ -26,7 +27,8 @@ export function CartItemDisplay({ item, onRemove }: CartItemDisplayProps) {
   const presetData = item.isPreset ? PRESET_KITS_DATA.find(pk => pk.id === item.id) : null;
   
   const coffeeSizeLabel = COFFEE_SIZES.find(cs => cs.value === item.coffee.size)?.label || 'N/A';
-  const packagingColorLabel = PACKAGING_COLORS.find(pc => pc.value === item.coffee.packagingColor)?.label || 'N/A';
+  const packagingColorData = findPackagingColor(item.coffee.packagingColor);
+  const packagingColorLabel = packagingColorData?.label || 'N/A';
 
   const getAddonDisplay = () => {
     if (!item.addon.type) return 'N/A';
@@ -34,7 +36,9 @@ export function CartItemDisplay({ item, onRemove }: CartItemDisplayProps) {
     let label = addonType?.label || item.addon.type;
     if (item.addon.variation) {
       const variation = findVariation(addonType, item.addon.variation);
-      if (variation) label += `, ${variation.label}`;
+      if (variation && (variation.value !== 'default' || (addonType?.variations?.length ?? 0) > 1)) {
+         label += `, ${variation.label}`;
+      }
     }
     if (item.addon.type === 'cuadro' && item.addon.cuadroDescription) {
       label += ` ("${item.addon.cuadroDescription}")`;
@@ -48,7 +52,9 @@ export function CartItemDisplay({ item, onRemove }: CartItemDisplayProps) {
     let label = mugType?.label || item.mug.type;
     if (item.mug.variation) {
       const variation = findVariation(mugType, item.mug.variation);
-      if (variation) label += `, ${variation.label}`;
+      if (variation && (variation.value !== 'default' || (mugType?.variations?.length ?? 0) > 1)) {
+        label += `, ${variation.label}`;
+      }
     }
     if (item.mug.type === 'termica' && item.mug.termicaMarked && item.mug.termicaPhrase) {
       label += ` (Frase: "${item.mug.termicaPhrase}")`;
@@ -60,21 +66,34 @@ export function CartItemDisplay({ item, onRemove }: CartItemDisplayProps) {
   
   const fallbackImageText = encodeURIComponent(item.name?.substring(0,10) || 'Kit');
   let imageUrl = item.image || presetData?.image;
+  let imageHint = "coffee product";
 
-  if (!imageUrl) {
-    if (!item.isPreset && item.mug.type && item.mug.variation) {
-      const mugConfig = findOption(MUG_OPTIONS, item.mug.type);
-      const variationConfig = findVariation(mugConfig, item.mug.variation);
-      if (variationConfig) imageUrl = variationConfig.image.replace(/120x120|150x150/g, '100x100'); // use variation image if available
+  if (!imageUrl && !item.isPreset) {
+    const mugConfig = findOption(MUG_OPTIONS, item.mug.type);
+    const mugVariationConfig = findVariation(mugConfig, item.mug.variation);
+    if (mugVariationConfig?.image) {
+      imageUrl = mugVariationConfig.image.replace(/120x120|150x150/g, '100x100');
+      imageHint = mugVariationConfig.dataAiHint;
     }
-     if (!imageUrl && !item.isPreset && item.addon.type && item.addon.variation) {
-      const addonConfig = findOption(ADDON_OPTIONS, item.addon.type);
-      const variationConfig = findVariation(addonConfig, item.addon.variation);
-      if (variationConfig) imageUrl = variationConfig.image.replace(/120x120|150x150/g, '100x100');
-    }
+
     if (!imageUrl) {
-      imageUrl = `https://placehold.co/100x100/${item.isPreset ? 'E6E6FA/4A4A4A' : 'FFC0CB/4A4A4A'}?text=${fallbackImageText}`;
+      const addonConfig = findOption(ADDON_OPTIONS, item.addon.type);
+      const addonVariationConfig = findVariation(addonConfig, item.addon.variation);
+      if (addonVariationConfig?.image) {
+        imageUrl = addonVariationConfig.image.replace(/120x120|150x150/g, '100x100');
+        imageHint = addonVariationConfig.dataAiHint;
+      }
     }
+    
+    if (!imageUrl && packagingColorData?.image) {
+        imageUrl = packagingColorData.image.replace(/100x100/g, '100x100'); // Assuming packaging images are already 100x100
+        imageHint = packagingColorData.dataAiHint;
+    }
+  }
+  
+  if (!imageUrl) {
+    imageUrl = `https://placehold.co/100x100/${item.isPreset ? 'E6E6FA/4A4A4A' : 'FFC0CB/4A4A4A'}?text=${fallbackImageText}`;
+    imageHint = item.isPreset ? "preset gift" : "custom coffee";
   }
 
 
@@ -88,7 +107,7 @@ export function CartItemDisplay({ item, onRemove }: CartItemDisplayProps) {
             width={100} 
             height={100} 
             className="rounded-md object-cover"
-            data-ai-hint="coffee product" // Generic hint as specific variation might be complex here
+            data-ai-hint={imageHint}
             />
         </div>
         <div className="w-3/4">

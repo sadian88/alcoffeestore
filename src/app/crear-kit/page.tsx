@@ -10,12 +10,11 @@ import { StepMug } from '@/components/kit-builder/step-mug';
 import { OrderSummary } from '@/components/kit-builder/order-summary';
 import { KitProgressBar } from '@/components/kit-builder/kit-progress-bar';
 import { ArrowLeft, ArrowRight, CheckSquare } from 'lucide-react';
-import { MUG_OPTIONS, ADDON_OPTIONS, findOption } from '@/lib/constants';
+import { MUG_OPTIONS, ADDON_OPTIONS, PACKAGING_COLORS, COFFEE_SIZES, findOption } from '@/lib/constants';
 
 const initialCoffeeState: CoffeeSelection = { size: '', packagingColor: '' };
 const initialAddonState: AddonSelection = { type: '', variation: '', cuadroDescription: '' };
 const initialMugState: MugSelection = { type: '', variation: '', termicaMarked: false, termicaPhrase: '' };
-
 
 const initialKitConfig: Readonly<KitConfig> = {
   name: 'Kit Personalizado',
@@ -28,53 +27,106 @@ const initialKitConfig: Readonly<KitConfig> = {
 const TOTAL_STEPS = 3;
 const STEP_NAMES = ["Café", "Complemento", "Taza"];
 
-
 export default function CrearKitPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [kitConfig, setKitConfig] = useState<KitConfig>({...initialKitConfig, coffee: {...initialCoffeeState}, addon: {...initialAddonState}, mug: {...initialMugState} });
+  const [kitConfig, setKitConfig] = useState<KitConfig>({
+    ...initialKitConfig,
+    coffee: { ...initialCoffeeState },
+    addon: { ...initialAddonState },
+    mug: { ...initialMugState }
+  });
 
-  // Set default selections for addons and mugs if not already set
   useEffect(() => {
-    if (currentStep === 2 && !kitConfig.addon.type && ADDON_OPTIONS.length > 0) {
-      const defaultAddon = ADDON_OPTIONS[0];
-      setKitConfig(prev => ({
-        ...prev,
-        addon: {
-          ...prev.addon,
-          type: defaultAddon.value,
-          variation: defaultAddon.variations?.[0]?.value || '',
-        }
-      }));
+    // Set default coffee selections
+    if (!kitConfig.coffee.size && COFFEE_SIZES.length > 0) {
+      updateCoffee({ size: COFFEE_SIZES[0].value });
     }
-    if (currentStep === 3 && !kitConfig.mug.type && MUG_OPTIONS.length > 0) {
-      const defaultMug = MUG_OPTIONS[0];
-      setKitConfig(prev => ({
-        ...prev,
-        mug: {
-          ...prev.mug,
-          type: defaultMug.value,
-          variation: defaultMug.variations?.[0]?.value || '',
-          termicaMarked: defaultMug.value === 'termica' ? false : undefined,
-          termicaPhrase: defaultMug.value === 'termica' ? '' : undefined,
-        }
-      }));
+    if (!kitConfig.coffee.packagingColor && PACKAGING_COLORS.length > 0) {
+      updateCoffee({ packagingColor: PACKAGING_COLORS[0].value });
     }
-  }, [currentStep, kitConfig.addon.type, kitConfig.mug.type]);
 
+    // Set default addon selections if not already set
+    if (!kitConfig.addon.type && ADDON_OPTIONS.length > 0) {
+      const defaultAddonType = ADDON_OPTIONS[0];
+      updateAddon({
+        type: defaultAddonType.value,
+        variation: defaultAddonType.variations?.[0]?.value || '',
+      });
+    }
+
+    // Set default mug selections if not already set
+    if (!kitConfig.mug.type && MUG_OPTIONS.length > 0) {
+      const defaultMugType = MUG_OPTIONS[0];
+      updateMug({
+        type: defaultMugType.value,
+        variation: defaultMugType.variations?.[0]?.value || '',
+        termicaMarked: defaultMugType.value === 'termica' ? false : undefined,
+        termicaPhrase: defaultMugType.value === 'termica' ? '' : undefined,
+      });
+    }
+  }, []); // Run once on mount to set initial defaults
 
   const updateCoffee = (coffee: Partial<CoffeeSelection>) => setKitConfig(prev => ({ ...prev, coffee: { ...prev.coffee, ...coffee } }));
-  const updateAddon = (addon: Partial<AddonSelection>) => setKitConfig(prev => ({ ...prev, addon: { ...prev.addon, ...addon } }));
-  const updateMug = (mug: Partial<MugSelection>) => setKitConfig(prev => ({ ...prev, mug: { ...prev.mug, ...mug } }));
+  const updateAddon = (addon: Partial<AddonSelection>) => {
+    const newType = addon.type === undefined ? kitConfig.addon.type : addon.type;
+    const addonConfig = findOption(ADDON_OPTIONS, newType);
+    const newVariation = addon.variation === undefined 
+        ? (newType === kitConfig.addon.type ? kitConfig.addon.variation : addonConfig?.variations?.[0]?.value || '')
+        : addon.variation;
+
+    setKitConfig(prev => ({
+      ...prev,
+      addon: {
+        ...prev.addon,
+        ...addon,
+        type: newType,
+        variation: newVariation,
+        cuadroDescription: newType !== 'cuadro' ? '' : (addon.cuadroDescription ?? prev.addon.cuadroDescription),
+      }
+    }));
+  };
+  const updateMug = (mug: Partial<MugSelection>) => {
+    const newType = mug.type === undefined ? kitConfig.mug.type : mug.type;
+    const mugConfig = findOption(MUG_OPTIONS, newType);
+    const newVariation = mug.variation === undefined
+        ? (newType === kitConfig.mug.type ? kitConfig.mug.variation : mugConfig?.variations?.[0]?.value || '')
+        : mug.variation;
+    
+    setKitConfig(prev => ({
+      ...prev,
+      mug: {
+        ...prev.mug,
+        ...mug,
+        type: newType,
+        variation: newVariation,
+        termicaMarked: newType === 'termica' ? (mug.termicaMarked ?? prev.mug.termicaMarked ?? false) : undefined,
+        termicaPhrase: newType === 'termica' ? (mug.termicaPhrase ?? prev.mug.termicaPhrase) : '',
+      }
+    }));
+  };
 
   const resetKit = () => {
-    // Create new objects for each part of the state to ensure re-renders and avoid stale closures
-    const newCoffeeState = { ...initialCoffeeState };
-    const newAddonState = { ...initialAddonState };
-    const newMugState = { ...initialMugState };
+    const newCoffeeState = { size: COFFEE_SIZES[0]?.value || '', packagingColor: PACKAGING_COLORS[0]?.value || '' };
+    
+    const defaultAddonType = ADDON_OPTIONS[0];
+    const newAddonState = { 
+      type: defaultAddonType?.value || '', 
+      variation: defaultAddonType?.variations?.[0]?.value || '', 
+      cuadroDescription: '' 
+    };
+    
+    const defaultMugType = MUG_OPTIONS[0];
+    const newMugState = { 
+      type: defaultMugType?.value || '', 
+      variation: defaultMugType?.variations?.[0]?.value || '',
+      termicaMarked: defaultMugType?.value === 'termica' ? false : undefined,
+      termicaPhrase: ''
+    };
+
     setKitConfig({
-      ...initialKitConfig, 
-      coffee: newCoffeeState, 
-      addon: newAddonState, 
+      ...initialKitConfig,
+      coffee: newCoffeeState,
+      addon: newAddonState,
       mug: newMugState
     });
     setCurrentStep(1);
@@ -82,19 +134,19 @@ export default function CrearKitPage() {
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
-  
+
   const navigateToStep = (step: number) => {
     if (step >= 1 && step <= TOTAL_STEPS) {
-      if(step <= currentStep || step === 1) { // Allow navigation to previous/completed or first step
-         setCurrentStep(step);
-      } else if (step === currentStep + 1 && isStepValid(currentStep)) { // Allow to next step if current is valid
-         setCurrentStep(step);
+      if (step <= currentStep || step === 1) {
+        setCurrentStep(step);
+      } else if (step === currentStep + 1 && isStepValid(currentStep)) {
+        setCurrentStep(step);
       }
     }
   };
 
   const isStepValid = (step: number): boolean => {
-    switch(step) {
+    switch (step) {
       case 1:
         return !!kitConfig.coffee.size && !!kitConfig.coffee.packagingColor;
       case 2: {
@@ -115,7 +167,6 @@ export default function CrearKitPage() {
       default: return false;
     }
   }
-
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -146,9 +197,9 @@ export default function CrearKitPage() {
                 Siguiente <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             ) : (
-              <Button 
-                onClick={() => { /* Potentially scroll to summary or final review action */ }} 
-                disabled={!isStepValid(currentStep)} 
+              <Button
+                onClick={() => { /* Potentially scroll to summary or final review action */ }}
+                disabled={!isStepValid(currentStep)}
                 className="text-lg px-6 py-3 bg-green-500 hover:bg-green-600"
               >
                 Revisar Kit Completo <CheckSquare className="ml-2 h-5 w-5" />

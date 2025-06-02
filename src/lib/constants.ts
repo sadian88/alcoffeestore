@@ -1,11 +1,11 @@
 
 import type { PresetKit } from '@/types';
-import { Coffee as CoffeeIcon, Leaf, Rocket, BookOpen, Frame, Paperclip } from 'lucide-react';
+import { Coffee as CoffeeIcon, Leaf, Rocket, BookOpen, Frame, Paperclip, HelpCircle } from 'lucide-react';
 import type { ElementType } from 'react';
 
 export interface ItemVariation {
-  value: string; // e.g., 'negra', 'rosa_floral'
-  label: string; // e.g., 'Negra', 'Rosa Floral'
+  value: string; // e.g., 'negra', 'rosa_floral', 'default'
+  label: string; // e.g., 'Negra', 'Rosa Floral', 'Estándar'
   image: string; // URL to placeholder
   dataAiHint: string;
 }
@@ -47,7 +47,9 @@ export const MUG_OPTIONS: ConfigurableItem[] = [
     value: 'termo',
     label: 'Termo Viajero',
     icon: Rocket,
-    // No variations specified by user for this one, can be added later if needed
+    variations: [
+      { value: 'default', label: 'Estándar', image: 'https://placehold.co/120x120/778899/FFFFFF?text=Termo', dataAiHint: 'travel thermos' }
+    ],
   },
 ];
 
@@ -57,9 +59,9 @@ export const ADDON_OPTIONS: ConfigurableItem[] = [
     label: 'Agenda Kawaii',
     icon: BookOpen,
     variations: [
-      { value: 'floral', label: 'Floral', image: 'https://placehold.co/120x120/FFB6C1/4A4A4A?text=Agenda+Floral', dataAiHint: 'floral planner' },
-      { value: 'estrellas', label: 'Estrellas', image: 'https://placehold.co/120x120/ADD8E6/4A4A4A?text=Agenda+Estrellas', dataAiHint: 'stars planner' },
-      { value: 'topos', label: 'Topos', image: 'https://placehold.co/120x120/FFFFE0/4A4A4A?text=Agenda+Topos', dataAiHint: 'dots planner' },
+      { value: 'floral', label: 'Floral', image: 'https://placehold.co/120x150/FFB6C1/4A4A4A?text=Agenda+Floral', dataAiHint: 'floral planner' },
+      { value: 'estrellas', label: 'Estrellas', image: 'https://placehold.co/120x150/ADD8E6/4A4A4A?text=Agenda+Estrellas', dataAiHint: 'stars planner' },
+      { value: 'topos', label: 'Topos', image: 'https://placehold.co/120x150/FFFFE0/4A4A4A?text=Agenda+Topos', dataAiHint: 'dots planner' },
     ],
   },
   {
@@ -67,11 +69,17 @@ export const ADDON_OPTIONS: ConfigurableItem[] = [
     label: 'Cuadro Decorativo',
     icon: Frame,
     requiresDescription: true,
+    variations: [
+      { value: 'default', label: 'Estándar', image: 'https://placehold.co/120x120/D2B48C/FFFFFF?text=Cuadro', dataAiHint: 'decorative frame' }
+    ],
   },
   {
     value: 'cuchara',
     label: 'Cuchara Clip Dorada',
     icon: Paperclip,
+    variations: [
+      { value: 'default', label: 'Dorada', image: 'https://placehold.co/120x120/FFD700/4A4A4A?text=Cuchara', dataAiHint: 'gold spoon' }
+    ],
   },
 ];
 
@@ -84,8 +92,8 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     image: 'https://placehold.co/300x300/FFC0CB/4A4A4A?text=Kit+Alegre',
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'rosa' },
-    addon: { type: 'agenda', variation: 'floral' }, // Specify variation for preset
-    mug: { type: 'ecologica', variation: 'rosa_pastel' }, // Specify variation for preset
+    addon: { type: 'agenda', variation: 'floral' }, 
+    mug: { type: 'ecologica', variation: 'rosa_pastel' }, 
   },
   {
     id: 'preset2',
@@ -95,8 +103,8 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     image: 'https://placehold.co/300x300/E6E6FA/4A4A4A?text=Kit+Relax',
     isPreset: true,
     coffee: { size: '150g', packagingColor: 'blanco' },
-    addon: { type: 'cuadro', cuadroDescription: 'Sueña en Grande ✨' },
-    mug: { type: 'termica', variation: 'blanca', termicaMarked: false }, // Specify variation
+    addon: { type: 'cuadro', variation: 'default', cuadroDescription: 'Sueña en Grande ✨' },
+    mug: { type: 'termica', variation: 'blanca', termicaMarked: false }, 
   },
   {
     id: 'preset3',
@@ -106,8 +114,8 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     image: 'https://placehold.co/300x300/FFD700/4A4A4A?text=Kit+Deluxe',
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'dorado' },
-    addon: { type: 'cuchara' },
-    mug: { type: 'termo' }, // No variation specified for termo in MUG_OPTIONS yet
+    addon: { type: 'cuchara', variation: 'default' },
+    mug: { type: 'termo', variation: 'default' }, 
   },
 ];
 
@@ -116,18 +124,17 @@ export const COFFEE_SIZES: { value: '150g' | '250g'; label: string }[] = [
   { value: '250g', label: '250 gramos' },
 ];
 
-export const PACKAGING_COLORS: { value: 'blanco' | 'rosa' | 'dorado'; label: string }[] = [
-  { value: 'blanco', label: 'Blanco Nube ☁️' },
-  { value: 'rosa', label: 'Rosa Pastel 🌸' },
-  { value: 'dorado', label: 'Dorado Brillante ✨' },
+export const PACKAGING_COLORS: ItemVariation[] = [
+  { value: 'blanco', label: 'Blanco Nube ☁️', image: 'https://placehold.co/100x100/F5F5F5/333333?text=Blanco', dataAiHint: 'white packaging' },
+  { value: 'rosa', label: 'Rosa Pastel 🌸', image: 'https://placehold.co/100x100/FFC0CB/333333?text=Rosa', dataAiHint: 'pink packaging' },
+  { value: 'dorado', label: 'Dorado Brillante ✨', image: 'https://placehold.co/100x100/FFD700/4A4A4A?text=Dorado', dataAiHint: 'gold packaging' },
 ];
 
-// These are for the specific case of personalizing a thermal mug
 export const THERMAL_MUG_CUSTOMIZATION_OPTIONS: { value: 'marcada' | 'sin_marcar'; label: string }[] = [
     { value: 'marcada', label: 'Con frase personalizada ✍️' },
     { value: 'sin_marcar', label: 'Sin marcar (lisa)' },
 ];
 
-// Helper function to find a specific option by value from the new configs
-export const findOption = (config: ConfigurableItem[], value: string | undefined) => config.find(opt => opt.value === value);
-export const findVariation = (option: ConfigurableItem | undefined, variationValue: string | undefined) => option?.variations?.find(v => v.value === variationValue);
+export const findOption = (config: ConfigurableItem[], value: string | undefined): ConfigurableItem | undefined => config.find(opt => opt.value === value);
+export const findVariation = (option: ConfigurableItem | undefined, variationValue: string | undefined): ItemVariation | undefined => option?.variations?.find(v => v.value === variationValue);
+export const findPackagingColor = (value: string | undefined): ItemVariation | undefined => PACKAGING_COLORS.find(pc => pc.value === value);

@@ -8,12 +8,13 @@ import { useCartStore } from '@/hooks/use-cart-store';
 import { useToast } from '@/hooks/use-toast';
 import { ShoppingCart, RotateCcw, Sparkles, Package, Puzzle, Coffee as CoffeeIcon } from 'lucide-react';
 import { 
-  PACKAGING_COLORS, 
   COFFEE_SIZES, 
   MUG_OPTIONS, 
   ADDON_OPTIONS,
+  PACKAGING_COLORS,
   findOption,
-  findVariation
+  findVariation,
+  findPackagingColor
 } from '@/lib/constants';
 
 interface OrderSummaryProps {
@@ -27,7 +28,9 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }
   const { addToCart } = useCartStore();
   const { toast } = useToast();
 
-  const getOptionLabel = (options: {value: string; label: string}[], value?: string) => options.find(opt => opt.value === value)?.label || 'No seleccionado';
+  const getCoffeeSizeLabel = (value?: string) => COFFEE_SIZES.find(opt => opt.value === value)?.label || 'No seleccionado';
+  const getPackagingColorLabel = (value?: string) => findPackagingColor(value)?.label || 'No seleccionado';
+
 
   const getDisplayableSelection = (itemType: 'mug' | 'addon') => {
     const selection = itemType === 'mug' ? kitConfig.mug : kitConfig.addon;
@@ -40,7 +43,8 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }
 
     if (selection.variation) {
       const variationConfig = findVariation(typeConfig, selection.variation);
-      if (variationConfig) {
+      // Only add variation label if it's not 'default' or if the typeConfig itself doesn't have many variations (implying 'default' is just the item itself)
+      if (variationConfig && (variationConfig.value !== 'default' || (typeConfig?.variations?.length ?? 0) > 1)) {
         label += `, ${variationConfig.label}`;
       }
     }
@@ -52,16 +56,16 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }
     const mugTypeConfig = findOption(MUG_OPTIONS, kitConfig.mug.type);
     const addonTypeConfig = findOption(ADDON_OPTIONS, kitConfig.addon.type);
 
-    if (!kitConfig.coffee.size || !kitConfig.coffee.packagingColor || !kitConfig.addon.type || !kitConfig.mug.type) {
-      toast({ title: "Kit Incompleto", description: "Por favor, completa todos los pasos para agregar el kit al carrito.", variant: "destructive" });
+    if (!kitConfig.coffee.size || !kitConfig.coffee.packagingColor) {
+      toast({ title: "Kit Incompleto", description: "Por favor, selecciona tamaño y empaque para tu café.", variant: "destructive" });
       return;
     }
-    if (mugTypeConfig?.variations && mugTypeConfig.variations.length > 0 && !kitConfig.mug.variation) {
-      toast({ title: "Kit Incompleto", description: "Por favor, selecciona un diseño para tu taza.", variant: "destructive" });
+    if (!kitConfig.addon.type || (addonTypeConfig?.variations && addonTypeConfig.variations.length > 0 && !kitConfig.addon.variation)) {
+      toast({ title: "Kit Incompleto", description: "Por favor, completa la selección del complemento.", variant: "destructive" });
       return;
     }
-    if (addonTypeConfig?.variations && addonTypeConfig.variations.length > 0 && !kitConfig.addon.variation) {
-      toast({ title: "Kit Incompleto", description: "Por favor, selecciona un diseño para tu complemento.", variant: "destructive" });
+    if (!kitConfig.mug.type || (mugTypeConfig?.variations && mugTypeConfig.variations.length > 0 && !kitConfig.mug.variation)) {
+      toast({ title: "Kit Incompleto", description: "Por favor, completa la selección de la taza.", variant: "destructive" });
       return;
     }
      if (addonTypeConfig?.requiresDescription && !kitConfig.addon.cuadroDescription) {
@@ -102,8 +106,8 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }
           <>
             <div className="space-y-1 p-3 bg-secondary/30 rounded-md">
               <h4 className="font-semibold flex items-center gap-2"><Package className="w-4 h-4 text-secondary-foreground"/>Café:</h4>
-              <p>Tamaño: <span className="font-medium">{getOptionLabel(COFFEE_SIZES, kitConfig.coffee.size) || '...'}</span></p>
-              <p>Empaque: <span className="font-medium">{getOptionLabel(PACKAGING_COLORS, kitConfig.coffee.packagingColor) || '...'}</span></p>
+              <p>Tamaño: <span className="font-medium">{getCoffeeSizeLabel(kitConfig.coffee.size) || '...'}</span></p>
+              <p>Empaque: <span className="font-medium">{getPackagingColorLabel(kitConfig.coffee.packagingColor) || '...'}</span></p>
               {currentStep !== 1 && <Button variant="link" size="sm" className="p-0 h-auto text-xs" onClick={() => navigateToStep(1)}>Editar Café</Button>}
             </div>
 
@@ -133,7 +137,7 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }
         )}
       </CardContent>
       <CardFooter className="flex flex-col sm:flex-row gap-2">
-        <Button onClick={handleAddToCart} className="w-full font-semibold" disabled={isKitEmpty}>
+        <Button onClick={handleAddToCart} className="w-full font-semibold" disabled={isKitEmpty || !isStepValid(1) || !isStepValid(2) || !isStepValid(3) }>
           <ShoppingCart className="mr-2 h-5 w-5" /> Agregar al Carrito
         </Button>
         <Button variant="outline" onClick={onReset} className="w-full">
