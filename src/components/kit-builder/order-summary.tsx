@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useToast } from '@/hooks/use-toast';
-import { ShoppingCart, RotateCcw, Sparkles, Package, Puzzle, Coffee as CoffeeIcon } from 'lucide-react';
+import { ShoppingCart, RotateCcw, Sparkles, Package, Puzzle, Coffee as CoffeeIcon, DollarSign } from 'lucide-react';
 import { 
   COFFEE_SIZES, 
   MUG_OPTIONS, 
@@ -14,7 +14,8 @@ import {
   PACKAGING_COLORS,
   findOption,
   findVariation,
-  findPackagingColor
+  findPackagingColor,
+  findCoffeeSize
 } from '@/lib/constants';
 
 interface OrderSummaryProps {
@@ -22,14 +23,15 @@ interface OrderSummaryProps {
   onReset: () => void;
   currentStep: number;
   navigateToStep: (step: number) => void;
-  isStepValid: (step: number) => boolean; // Added isStepValid prop
+  isStepValid: (step: number) => boolean;
+  calculatePrice: (kitConfig: KitConfig) => number;
 }
 
-export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep, isStepValid }: OrderSummaryProps) {
+export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep, isStepValid, calculatePrice }: OrderSummaryProps) {
   const { addToCart } = useCartStore();
   const { toast } = useToast();
 
-  const getCoffeeSizeLabel = (value?: string) => COFFEE_SIZES.find(opt => opt.value === value)?.label || 'No seleccionado';
+  const getCoffeeSizeLabel = (value?: string) => findCoffeeSize(value)?.label || 'No seleccionado';
   const getPackagingColorLabel = (value?: string) => findPackagingColor(value)?.label || 'No seleccionado';
 
 
@@ -44,7 +46,6 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep, 
 
     if (selection.variation) {
       const variationConfig = findVariation(typeConfig, selection.variation);
-      // Only add variation label if it's not 'default' or if the typeConfig itself doesn't have many variations (implying 'default' is just the item itself)
       if (variationConfig && (variationConfig.value !== 'default' || (typeConfig?.variations?.length ?? 0) > 1)) {
         label += `, ${variationConfig.label}`;
       }
@@ -54,38 +55,17 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep, 
 
 
   const handleAddToCart = () => {
-    const mugTypeConfig = findOption(MUG_OPTIONS, kitConfig.mug.type);
-    const addonTypeConfig = findOption(ADDON_OPTIONS, kitConfig.addon.type);
-
-    if (!kitConfig.coffee.size || !kitConfig.coffee.packagingColor) {
-      toast({ title: "Kit Incompleto", description: "Por favor, selecciona tamaño y empaque para tu café.", variant: "destructive" });
-      navigateToStep(1);
+    if (!isEntireKitValid) {
+       toast({ title: "Kit Incompleto", description: "Por favor, completa todos los pasos y selecciones de tu kit.", variant: "destructive" });
+      if (!isStepValid(1)) navigateToStep(1);
+      else if (!isStepValid(2)) navigateToStep(2);
+      else if (!isStepValid(3)) navigateToStep(3);
       return;
     }
-    if (!kitConfig.addon.type || (addonTypeConfig?.variations && addonTypeConfig.variations.length > 0 && !kitConfig.addon.variation)) {
-      toast({ title: "Kit Incompleto", description: "Por favor, completa la selección del complemento.", variant: "destructive" });
-      navigateToStep(2);
-      return;
-    }
-    if (!kitConfig.mug.type || (mugTypeConfig?.variations && mugTypeConfig.variations.length > 0 && !kitConfig.mug.variation)) {
-      toast({ title: "Kit Incompleto", description: "Por favor, completa la selección de la taza.", variant: "destructive" });
-      navigateToStep(3);
-      return;
-    }
-     if (addonTypeConfig?.requiresDescription && !kitConfig.addon.cuadroDescription) {
-      toast({ title: "Kit Incompleto", description: "Por favor, añade una descripción para el cuadro.", variant: "destructive" });
-      navigateToStep(2);
-      return;
-    }
-    if (mugTypeConfig?.isPersonalizable && kitConfig.mug.termicaMarked && !kitConfig.mug.termicaPhrase) {
-      toast({ title: "Kit Incompleto", description: "Por favor, añade una frase para tu taza térmica personalizada.", variant: "destructive" });
-      navigateToStep(3);
-      return;
-    }
-
 
     const kitName = `Kit Personalizado ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    addToCart({ ...kitConfig, name: kitName, isPreset: false });
+    const finalPrice = calculatePrice(kitConfig); // Use the passed function
+    addToCart({ ...kitConfig, name: kitName, isPreset: false, price: finalPrice });
     toast({
       title: "¡Kit Agregado! 💖",
       description: `${kitName} ha sido añadido a tu carrito.`,
@@ -97,6 +77,7 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep, 
 
   const isKitEmpty = !kitConfig.coffee.size && !kitConfig.coffee.packagingColor && !kitConfig.addon.type && !kitConfig.mug.type;
   const isEntireKitValid = isStepValid(1) && isStepValid(2) && isStepValid(3);
+  const currentPrice = kitConfig.price || 0;
 
   return (
     <Card className="sticky top-24 shadow-lg">
@@ -106,7 +87,7 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep, 
         </CardTitle>
         <CardDescription>Así va quedando tu kit de café personalizado:</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4 text-sm">
+      <CardContent className="space-y-3 text-sm">
         {isKitEmpty && <p className="text-muted-foreground text-center py-4">¡Empieza a seleccionar componentes para ver tu kit aquí!</p>}
         
         {!isKitEmpty && (
@@ -140,6 +121,15 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep, 
               )}
               {currentStep !== 3 && kitConfig.addon.type && <Button variant="link" size="sm" className="p-0 h-auto text-xs" onClick={() => navigateToStep(3)}>Editar Taza</Button>}
             </div>
+            
+            <div className="pt-3 mt-3 border-t border-border">
+                 <h4 className="font-semibold flex items-center gap-2 text-lg text-primary">
+                    <DollarSign className="w-5 h-5"/>Precio Estimado del Kit:
+                </h4>
+                <p className="text-2xl font-bold text-accent">
+                    ${currentPrice.toFixed(2)}
+                </p>
+            </div>
           </>
         )}
       </CardContent>
@@ -154,4 +144,3 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep, 
     </Card>
   );
 }
-

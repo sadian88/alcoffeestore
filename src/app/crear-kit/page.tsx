@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import type { KitConfig, CoffeeSelection, AddonSelection, MugSelection } from '@/types';
 import { Button } from '@/components/ui/button';
 import { StepCoffee } from '@/components/kit-builder/step-coffee';
@@ -10,10 +10,18 @@ import { StepAddon } from '@/components/kit-builder/step-addon';
 import { StepMug } from '@/components/kit-builder/step-mug';
 import { OrderSummary } from '@/components/kit-builder/order-summary';
 import { KitProgressBar } from '@/components/kit-builder/kit-progress-bar';
-import { ArrowLeft, ArrowRight, ShoppingCart } from 'lucide-react'; // Replaced CheckSquare with ShoppingCart
-import { useCartStore } from '@/hooks/use-cart-store'; // Import useCartStore
-import { useToast } from '@/hooks/use-toast'; // Import useToast
-import { MUG_OPTIONS, ADDON_OPTIONS, PACKAGING_COLORS, COFFEE_SIZES, findOption } from '@/lib/constants';
+import { ArrowLeft, ArrowRight, ShoppingCart } from 'lucide-react';
+import { useCartStore } from '@/hooks/use-cart-store';
+import { useToast } from '@/hooks/use-toast';
+import { 
+  MUG_OPTIONS, 
+  ADDON_OPTIONS, 
+  PACKAGING_COLORS, 
+  COFFEE_SIZES, 
+  findOption, 
+  findVariation,
+  findCoffeeSize
+} from '@/lib/constants';
 
 const initialCoffeeState: CoffeeSelection = { size: '', packagingColor: '' };
 const initialAddonState: AddonSelection = { type: '', variation: '', cuadroDescription: '' };
@@ -25,6 +33,7 @@ const initialKitConfig: Readonly<KitConfig> = {
   addon: { ...initialAddonState },
   mug: { ...initialMugState },
   isPreset: false,
+  price: 0,
 };
 
 const TOTAL_STEPS = 3;
@@ -43,34 +52,81 @@ export default function CrearKitPage() {
   const { addToCart } = useCartStore();
   const { toast } = useToast();
 
+  const calculateKitPrice = useCallback((currentKitConfig: KitConfig): number => {
+    let totalPrice = 0;
+
+    // Coffee price
+    const coffeeSizeInfo = findCoffeeSize(currentKitConfig.coffee.size);
+    if (coffeeSizeInfo) {
+      totalPrice += coffeeSizeInfo.price;
+    }
+
+    // Addon price
+    const addonTypeInfo = findOption(ADDON_OPTIONS, currentKitConfig.addon.type);
+    if (addonTypeInfo) {
+      const addonVariationInfo = findVariation(addonTypeInfo, currentKitConfig.addon.variation);
+      if (addonVariationInfo) {
+        totalPrice += addonVariationInfo.price;
+      }
+      if (addonTypeInfo.value === 'cuadro' && currentKitConfig.addon.cuadroDescription && addonTypeInfo.descriptionFee) {
+        totalPrice += addonTypeInfo.descriptionFee;
+      }
+    }
+
+    // Mug price
+    const mugTypeInfo = findOption(MUG_OPTIONS, currentKitConfig.mug.type);
+    if (mugTypeInfo) {
+      const mugVariationInfo = findVariation(mugTypeInfo, currentKitConfig.mug.variation);
+      if (mugVariationInfo) {
+        totalPrice += mugVariationInfo.price;
+      }
+      if (mugTypeInfo.value === 'termica' && currentKitConfig.mug.termicaMarked && mugTypeInfo.personalizationFee) {
+        totalPrice += mugTypeInfo.personalizationFee;
+      }
+    }
+    return totalPrice;
+  }, []);
 
   useEffect(() => {
-    if (!kitConfig.coffee.size && COFFEE_SIZES.length > 0) {
-      updateCoffee({ size: COFFEE_SIZES[0].value });
+    const newPrice = calculateKitPrice(kitConfig);
+    setKitConfig(prev => ({ ...prev, price: newPrice }));
+  }, [kitConfig.coffee, kitConfig.addon, kitConfig.mug, calculateKitPrice]);
+
+
+  useEffect(() => {
+    // Set initial defaults only if not already set
+    let updated = false;
+    const newConfig = { ...kitConfig };
+
+    if (!newConfig.coffee.size && COFFEE_SIZES.length > 0) {
+      newConfig.coffee.size = COFFEE_SIZES[0].value;
+      updated = true;
     }
-    if (!kitConfig.coffee.packagingColor && PACKAGING_COLORS.length > 0) {
-      updateCoffee({ packagingColor: PACKAGING_COLORS[0].value });
+    if (!newConfig.coffee.packagingColor && PACKAGING_COLORS.length > 0) {
+      newConfig.coffee.packagingColor = PACKAGING_COLORS[0].value;
+      updated = true;
     }
 
-    if (!kitConfig.addon.type && ADDON_OPTIONS.length > 0) {
+    if (!newConfig.addon.type && ADDON_OPTIONS.length > 0) {
       const defaultAddonType = ADDON_OPTIONS[0];
-      updateAddon({
-        type: defaultAddonType.value,
-        variation: defaultAddonType.variations?.[0]?.value || '',
-      });
+      newConfig.addon.type = defaultAddonType.value;
+      newConfig.addon.variation = defaultAddonType.variations?.[0]?.value || '';
+      updated = true;
     }
 
-    if (!kitConfig.mug.type && MUG_OPTIONS.length > 0) {
+    if (!newConfig.mug.type && MUG_OPTIONS.length > 0) {
       const defaultMugType = MUG_OPTIONS[0];
-      updateMug({
-        type: defaultMugType.value,
-        variation: defaultMugType.variations?.[0]?.value || '',
-        termicaMarked: defaultMugType.value === 'termica' ? false : undefined,
-        termicaPhrase: defaultMugType.value === 'termica' ? '' : undefined,
-      });
+      newConfig.mug.type = defaultMugType.value;
+      newConfig.mug.variation = defaultMugType.variations?.[0]?.value || '';
+      newConfig.mug.termicaMarked = defaultMugType.value === 'termica' ? false : undefined;
+      newConfig.mug.termicaPhrase = defaultMugType.value === 'termica' ? '' : undefined;
+      updated = true;
+    }
+    if (updated) {
+      setKitConfig(newConfig);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); 
+  }, []); // Run once on mount
 
   const updateCoffee = (coffee: Partial<CoffeeSelection>) => setKitConfig(prev => ({ ...prev, coffee: { ...prev.coffee, ...coffee } }));
   
@@ -131,12 +187,14 @@ export default function CrearKitPage() {
       termicaPhrase: ''
     };
 
-    setKitConfig({
+    const newKit = {
       ...initialKitConfig,
       coffee: newCoffeeState,
       addon: newAddonState,
       mug: newMugState
-    });
+    };
+    newKit.price = calculateKitPrice(newKit);
+    setKitConfig(newKit);
     setCurrentStep(1);
   }
 
@@ -149,7 +207,6 @@ export default function CrearKitPage() {
     }
   };
   
-
   const isStepValid = (step: number): boolean => {
     switch (step) {
       case 1:
@@ -166,7 +223,7 @@ export default function CrearKitPage() {
         const mugConfig = findOption(MUG_OPTIONS, kitConfig.mug.type);
         if (mugConfig?.variations && mugConfig.variations.length > 0 && !kitConfig.mug.variation) return false;
         if (mugConfig?.isPersonalizable && typeof kitConfig.mug.termicaMarked === 'undefined') return false;
-        if (mugConfig?.isPersonalizable && kitConfig.mug.termicaMarked && !kitConfig.mug.termicaPhrase) return false;
+        // if (mugConfig?.isPersonalizable && kitConfig.mug.termicaMarked && !kitConfig.mug.termicaPhrase) return false; // Phrase can be optional
         return true;
       }
       default: return false;
@@ -189,7 +246,8 @@ export default function CrearKitPage() {
     }
 
     const kitName = `Kit Personalizado ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    addToCart({ ...kitConfig, name: kitName, isPreset: false });
+    const finalPrice = calculateKitPrice(kitConfig);
+    addToCart({ ...kitConfig, name: kitName, isPreset: false, price: finalPrice });
     toast({
       title: "¡Kit Agregado! 💖",
       description: `${kitName} ha sido añadido a tu carrito.`,
@@ -247,6 +305,7 @@ export default function CrearKitPage() {
             currentStep={currentStep} 
             navigateToStep={navigateToStep}
             isStepValid={isStepValid}
+            calculatePrice={calculateKitPrice}
           />
         </aside>
       </div>
