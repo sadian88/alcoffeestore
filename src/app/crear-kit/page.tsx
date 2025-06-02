@@ -160,22 +160,22 @@ export default function CrearKitPage() {
     }));
   };
 
-  const updateMug = (mug: Partial<MugSelection>) => {
-    const newType = mug.type === undefined ? kitConfig.mug.type : mug.type;
+  const updateMug = (mugUpdate: Partial<MugSelection>) => {
+    const newType = mugUpdate.type === undefined ? kitConfig.mug.type : mugUpdate.type;
     const mugConfig = findOption(MUG_OPTIONS, newType);
-    const newVariation = mug.variation === undefined
+    const newVariation = mugUpdate.variation === undefined
         ? (newType === kitConfig.mug.type ? kitConfig.mug.variation : mugConfig?.variations?.[0]?.value || '')
-        : mug.variation;
+        : mugUpdate.variation;
     
     setKitConfig(prev => ({
       ...prev,
       mug: {
         ...prev.mug,
-        ...mug,
+        ...mugUpdate,
         type: newType,
         variation: newVariation,
-        termicaMarked: newType === 'termica' ? (mug.termicaMarked ?? prev.mug.termicaMarked ?? false) : undefined,
-        termicaPhrase: newType === 'termica' ? (mug.termicaPhrase ?? prev.mug.termicaPhrase) : '',
+        termicaMarked: newType === 'termica' ? (mugUpdate.termicaMarked ?? prev.mug.termicaMarked ?? false) : undefined,
+        termicaPhrase: newType === 'termica' ? (mugUpdate.termicaPhrase ?? prev.mug.termicaPhrase) : undefined,
       }
     }));
   };
@@ -195,7 +195,7 @@ export default function CrearKitPage() {
       type: defaultMugType?.value || '', 
       variation: defaultMugType?.variations?.[0]?.value || '',
       termicaMarked: defaultMugType?.value === 'termica' ? false : undefined,
-      termicaPhrase: ''
+      termicaPhrase: defaultMugType?.value === 'termica' ? '' : undefined
     };
 
     const newKit = {
@@ -234,6 +234,8 @@ export default function CrearKitPage() {
         const mugConfig = findOption(MUG_OPTIONS, kitConfig.mug.type);
         if (mugConfig?.variations && mugConfig.variations.length > 0 && !kitConfig.mug.variation) return false;
         if (mugConfig?.isPersonalizable && typeof kitConfig.mug.termicaMarked === 'undefined') return false;
+        // If termicaMarked is true, termicaPhrase must not be empty (if we want to enforce this, add: && (!kitConfig.mug.termicaMarked || (kitConfig.mug.termicaMarked && !!kitConfig.mug.termicaPhrase)))
+        // For now, allowing empty phrase if marked, as fee is for marking itself.
         return true;
       }
       default: return false;
@@ -328,8 +330,8 @@ export default function CrearKitPage() {
   };
 
   const handleAddIndividualComponentToCart = (componentType: 'coffee' | 'addon' | 'mug') => {
-    let componentDetail: CartItemComponentDetail;
-    let displayName: string;
+    let componentDetail: CartItemComponentDetail | undefined = undefined; // Initialize as undefined
+    let displayName: string = ''; // Initialize as empty
     let isValid = false;
 
     if (componentType === 'coffee' && isStepValid(1)) {
@@ -349,21 +351,15 @@ export default function CrearKitPage() {
       return;
     }
 
-    if (isValid) {
-      // @ts-ignore componentDetail will be defined if isValid is true
+    if (isValid && componentDetail) { // Check if componentDetail is defined
       const cartItem: Omit<CartItem, 'id' | 'quantity'> = {
         cartItemType: 'individual_product',
-        // @ts-ignore
         displayName: displayName,
-        // @ts-ignore
         totalPrice: componentDetail.price,
-        // @ts-ignore
-        components: [componentDetail],
-        // @ts-ignore
+        components: [componentDetail], // componentDetail is now guaranteed to be defined
         displayImage: componentDetail.image,
       };
       addToCart(cartItem);
-      // @ts-ignore
       toast({ title: "¡Producto Agregado! ✨", description: `${displayName} ha sido añadido a tu carrito.` });
     }
   };
@@ -427,3 +423,4 @@ export default function CrearKitPage() {
     </div>
   );
 }
+
