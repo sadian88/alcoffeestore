@@ -1,13 +1,24 @@
+
 "use client";
 
 import Link from 'next/link';
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CartItemDisplay } from '@/components/cart/cart-item-display';
 import { ShoppingCart, Trash2, Send, Sparkles, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
+import { 
+  MUG_OPTIONS, 
+  ADDON_OPTIONS,
+  COFFEE_SIZES,
+  PACKAGING_COLORS,
+  findOption,
+  findVariation,
+  findPackagingColor
+} from '@/lib/constants';
+import type { CartItem } from '@/types';
 
 export default function CarritoPage() {
   const { cartItems, removeFromCart, clearCart, getCartItemCount, isCartLoaded } = useCartStore();
@@ -22,19 +33,86 @@ export default function CarritoPage() {
     });
   };
 
-  const handleFinalizeOrder = () => {
-    // Simulate order placement
-    clearCart();
-    toast({
-      title: "¡Pedido Enviado! 🎉",
-      description: "Gracias por tu compra. Tu kit mágico está en camino.",
-      className: "bg-primary/10 border-primary text-primary-foreground duration-5000",
-    });
-    // Potentially redirect to a thank you page or home
-  };
-
   const totalPrice = cartItems.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
   const itemCount = getCartItemCount();
+
+  const formatItemForWhatsApp = (item: CartItem): string => {
+    const coffeeSizeLabel = COFFEE_SIZES.find(cs => cs.value === item.coffee.size)?.label || 'N/A';
+    const packagingColorData = findPackagingColor(item.coffee.packagingColor);
+    const packagingColorLabel = packagingColorData?.label || 'N/A';
+
+    let addonDetails = 'N/A';
+    if (item.addon.type) {
+      const addonType = findOption(ADDON_OPTIONS, item.addon.type);
+      addonDetails = addonType?.label || item.addon.type;
+      if (item.addon.variation) {
+        const variation = findVariation(addonType, item.addon.variation);
+        if (variation && (variation.value !== 'default' || (addonType?.variations?.length ?? 0) > 1)) {
+           addonDetails += `, ${variation.label}`;
+        }
+      }
+      if (item.addon.type === 'cuadro' && item.addon.cuadroDescription) {
+        addonDetails += ` ("${item.addon.cuadroDescription}")`;
+      }
+    }
+
+    let mugDetails = 'N/A';
+    if (item.mug.type) {
+      const mugType = findOption(MUG_OPTIONS, item.mug.type);
+      mugDetails = mugType?.label || item.mug.type;
+      if (item.mug.variation) {
+        const variation = findVariation(mugType, item.mug.variation);
+        if (variation && (variation.value !== 'default' || (mugType?.variations?.length ?? 0) > 1)) {
+          mugDetails += `, ${variation.label}`;
+        }
+      }
+      if (item.mug.type === 'termica' && item.mug.termicaMarked && item.mug.termicaPhrase) {
+        mugDetails += ` (Frase: "${item.mug.termicaPhrase}")`;
+      } else if (item.mug.type === 'termica' && item.mug.termicaMarked) {
+        mugDetails += ` (Personalizada)`;
+      }
+    }
+
+    const priceString = item.price ? `$${item.price.toFixed(2)}` : 'Precio no disponible';
+
+    return `
+*${item.name || (item.isPreset ? 'Kit Prediseñado' : 'Kit Personalizado')}*
+  ☕ Café: ${coffeeSizeLabel}, Empaque ${packagingColorLabel}
+  🎁 Complemento: ${addonDetails}
+  ✨ Taza: ${mugDetails}
+  💰 Precio: ${priceString}
+`;
+  };
+
+  const handleFinalizeOrder = () => {
+    if (cartItems.length === 0) {
+      toast({
+        title: "Carrito Vacío",
+        description: "Agrega algunos kits antes de finalizar el pedido.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const introMessage = "¡Hola alCoffee! 👋 Quisiera realizar el siguiente pedido:\n";
+    const itemsMessage = cartItems.map(item => formatItemForWhatsApp(item)).join("\n");
+    const totalMessage = `\n--- TOTAL ---\nTotal Estimado: $${totalPrice.toFixed(2)}`;
+    const outroMessage = "\n\n¡Gracias! 😊";
+
+    const fullMessage = introMessage + itemsMessage + totalMessage + outroMessage;
+    const encodedMessage = encodeURIComponent(fullMessage);
+    const whatsappUrl = `https://wa.me/3153042476?text=${encodedMessage}`;
+
+    window.open(whatsappUrl, '_blank');
+    
+    clearCart();
+    toast({
+      title: "Pedido Preparado para WhatsApp 📲",
+      description: "Tu pedido ha sido enviado a WhatsApp. Por favor, completa la orden allí.",
+      className: "bg-primary/10 border-primary text-primary-foreground duration-5000",
+    });
+  };
+
 
   if (!isCartLoaded) {
     return (
@@ -94,11 +172,11 @@ export default function CarritoPage() {
                   <span>Total Estimado:</span>
                   <span>${totalPrice.toFixed(2)}</span>
                 </div>
-                <p className="text-xs text-muted-foreground">El envío se calculará en el siguiente paso (simulado).</p>
+                <p className="text-xs text-muted-foreground">El envío se gestionará por WhatsApp.</p>
               </CardContent>
               <CardFooter className="flex flex-col space-y-3">
                 <Button onClick={handleFinalizeOrder} size="lg" className="w-full font-semibold">
-                  <Send className="mr-2 h-5 w-5" /> Finalizar Pedido
+                  <Send className="mr-2 h-5 w-5" /> Finalizar Pedido por WhatsApp
                 </Button>
                 <Button variant="destructive" onClick={handleClearCart} size="lg" className="w-full">
                   <Trash2 className="mr-2 h-5 w-5" /> Vaciar Carrito
