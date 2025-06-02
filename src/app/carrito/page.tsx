@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -10,21 +10,12 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { CartItemDisplay } from '@/components/cart/cart-item-display';
 import { ShoppingCart, Trash2, Send, Sparkles, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
-import { 
-  MUG_OPTIONS, 
-  ADDON_OPTIONS,
-  COFFEE_SIZES,
-  PACKAGING_COLORS,
-  findOption,
-  findVariation,
-  findPackagingColor
-} from '@/lib/constants';
-import type { CartItem } from '@/types';
+import type { CartItem, CartItemComponentDetail } from '@/types'; // Import CartItemComponentDetail
 
 export default function CarritoPage() {
   const { cartItems, removeFromCart, clearCart, getCartItemCount, isCartLoaded } = useCartStore();
   const { toast } = useToast();
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
 
   const handleClearCart = () => {
     clearCart();
@@ -35,62 +26,29 @@ export default function CarritoPage() {
     });
   };
 
-  const totalPrice = cartItems.reduce((total, item) => total + (item.price || 0) * item.quantity, 0);
-  const itemCount = getCartItemCount();
+  const totalPrice = cartItems.reduce((total, item) => total + (item.totalPrice || 0) * item.quantity, 0);
+  const itemCount = getCartItemCount(); // This should reflect number of CartItem entries, not sub-components
+
+  const formatComponentForWhatsApp = (component: CartItemComponentDetail): string => {
+    return `    - ${component.name}: $${component.price.toFixed(2)}`;
+  };
 
   const formatItemForWhatsApp = (item: CartItem): string => {
-    const coffeeSizeLabel = COFFEE_SIZES.find(cs => cs.value === item.coffee.size)?.label || 'N/A';
-    const packagingColorData = findPackagingColor(item.coffee.packagingColor);
-    const packagingColorLabel = packagingColorData?.label || 'N/A';
-
-    let addonDetails = 'N/A';
-    if (item.addon.type) {
-      const addonType = findOption(ADDON_OPTIONS, item.addon.type);
-      addonDetails = addonType?.label || item.addon.type;
-      if (item.addon.variation) {
-        const variation = findVariation(addonType, item.addon.variation);
-        if (variation && (variation.value !== 'default' || (addonType?.variations?.length ?? 0) > 1)) {
-           addonDetails += `, ${variation.label}`;
-        }
-      }
-      if (item.addon.type === 'cuadro' && item.addon.cuadroDescription) {
-        addonDetails += ` ("${item.addon.cuadroDescription}")`;
-      }
+    let message = `\n*${item.displayName}* - $${item.totalPrice.toFixed(2)}`;
+    if (item.cartItemType === 'kit' && item.components.length > 1) {
+      message += "\n  Componentes:";
+      item.components.forEach(comp => {
+        message += `\n  ${formatComponentForWhatsApp(comp)}`;
+      });
     }
-
-    let mugDetails = 'N/A';
-    if (item.mug.type) {
-      const mugType = findOption(MUG_OPTIONS, item.mug.type);
-      mugDetails = mugType?.label || item.mug.type;
-      if (item.mug.variation) {
-        const variation = findVariation(mugType, item.mug.variation);
-        if (variation && (variation.value !== 'default' || (mugType?.variations?.length ?? 0) > 1)) {
-          mugDetails += `, ${variation.label}`;
-        }
-      }
-      if (item.mug.type === 'termica' && item.mug.termicaMarked && item.mug.termicaPhrase) {
-        mugDetails += ` (Frase: "${item.mug.termicaPhrase}")`;
-      } else if (item.mug.type === 'termica' && item.mug.termicaMarked) {
-        mugDetails += ` (Personalizada)`;
-      }
-    }
-
-    const priceString = item.price ? `$${item.price.toFixed(2)}` : 'Precio no disponible';
-
-    return `
-*${item.name || (item.isPreset ? 'Kit Prediseñado' : 'Kit Personalizado')}*
-  ☕ Café: ${coffeeSizeLabel}, Empaque ${packagingColorLabel}
-  🎁 Complemento: ${addonDetails}
-  ✨ Taza: ${mugDetails}
-  💰 Precio: ${priceString}
-`;
+    return message;
   };
 
   const handleFinalizeOrder = () => {
     if (cartItems.length === 0) {
       toast({
         title: "Carrito Vacío",
-        description: "Agrega algunos kits antes de finalizar el pedido.",
+        description: "Agrega algunos productos o kits antes de finalizar el pedido.",
         variant: "destructive",
       });
       return;
@@ -98,7 +56,7 @@ export default function CarritoPage() {
 
     const introMessage = "¡Hola alCoffee! 👋 Quisiera realizar el siguiente pedido:\n";
     const itemsMessage = cartItems.map(item => formatItemForWhatsApp(item)).join("\n");
-    const totalMessage = `\n--- TOTAL ---\nTotal Estimado: $${totalPrice.toFixed(2)}`;
+    const totalMessage = `\n\n--- TOTAL DEL PEDIDO ---\nTotal Estimado: $${totalPrice.toFixed(2)}`;
     const outroMessage = "\n\n¡Gracias! 😊";
 
     const fullMessage = introMessage + itemsMessage + totalMessage + outroMessage;
@@ -107,8 +65,10 @@ export default function CarritoPage() {
 
     window.open(whatsappUrl, '_blank');
     
-    clearCart();
-    // Redirect to a confirmation page instead of just showing a toast here
+    // It's better to clear cart only after user confirms sending the WA message,
+    // but for now, we clear it and redirect.
+    // Consider not clearing immediately or providing an option.
+    // clearCart(); 
     router.push('/pedido-enviado');
   };
 
@@ -132,7 +92,7 @@ export default function CarritoPage() {
           Tu Carrito de Ensueño
         </h1>
         <p className="text-lg text-muted-foreground">
-          {itemCount > 0 ? `Tienes ${itemCount} kit(s) listos para convertirse en realidad.` : 'Aún no has agregado ninguna maravilla a tu carrito.'}
+          {itemCount > 0 ? `Tienes ${itemCount} artículo(s) en tu carrito.` : 'Aún no has agregado ninguna maravilla a tu carrito.'}
         </p>
       </header>
 
@@ -164,7 +124,7 @@ export default function CarritoPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Kits en el carrito:</span>
+                  <span className="text-muted-foreground">Artículos en el carrito:</span>
                   <span className="font-semibold">{itemCount}</span>
                 </div>
                 <div className="flex justify-between text-xl font-bold text-primary">
