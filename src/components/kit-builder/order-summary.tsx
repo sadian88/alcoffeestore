@@ -22,9 +22,10 @@ interface OrderSummaryProps {
   onReset: () => void;
   currentStep: number;
   navigateToStep: (step: number) => void;
+  isStepValid: (step: number) => boolean; // Added isStepValid prop
 }
 
-export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }: OrderSummaryProps) {
+export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep, isStepValid }: OrderSummaryProps) {
   const { addToCart } = useCartStore();
   const { toast } = useToast();
 
@@ -58,22 +59,27 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }
 
     if (!kitConfig.coffee.size || !kitConfig.coffee.packagingColor) {
       toast({ title: "Kit Incompleto", description: "Por favor, selecciona tamaño y empaque para tu café.", variant: "destructive" });
+      navigateToStep(1);
       return;
     }
     if (!kitConfig.addon.type || (addonTypeConfig?.variations && addonTypeConfig.variations.length > 0 && !kitConfig.addon.variation)) {
       toast({ title: "Kit Incompleto", description: "Por favor, completa la selección del complemento.", variant: "destructive" });
+      navigateToStep(2);
       return;
     }
     if (!kitConfig.mug.type || (mugTypeConfig?.variations && mugTypeConfig.variations.length > 0 && !kitConfig.mug.variation)) {
       toast({ title: "Kit Incompleto", description: "Por favor, completa la selección de la taza.", variant: "destructive" });
+      navigateToStep(3);
       return;
     }
      if (addonTypeConfig?.requiresDescription && !kitConfig.addon.cuadroDescription) {
       toast({ title: "Kit Incompleto", description: "Por favor, añade una descripción para el cuadro.", variant: "destructive" });
+      navigateToStep(2);
       return;
     }
     if (mugTypeConfig?.isPersonalizable && kitConfig.mug.termicaMarked && !kitConfig.mug.termicaPhrase) {
       toast({ title: "Kit Incompleto", description: "Por favor, añade una frase para tu taza térmica personalizada.", variant: "destructive" });
+      navigateToStep(3);
       return;
     }
 
@@ -90,6 +96,7 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }
   
 
   const isKitEmpty = !kitConfig.coffee.size && !kitConfig.coffee.packagingColor && !kitConfig.addon.type && !kitConfig.mug.type;
+  const isEntireKitValid = isStepValid(1) && isStepValid(2) && isStepValid(3);
 
   return (
     <Card className="sticky top-24 shadow-lg">
@@ -137,7 +144,7 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }
         )}
       </CardContent>
       <CardFooter className="flex flex-col sm:flex-row gap-2">
-        <Button onClick={handleAddToCart} className="w-full font-semibold" disabled={isKitEmpty || !isStepValid(1) || !isStepValid(2) || !isStepValid(3) }>
+        <Button onClick={handleAddToCart} className="w-full font-semibold" disabled={isKitEmpty || !isEntireKitValid }>
           <ShoppingCart className="mr-2 h-5 w-5" /> Agregar al Carrito
         </Button>
         <Button variant="outline" onClick={onReset} className="w-full">
@@ -147,3 +154,4 @@ export function OrderSummary({ kitConfig, onReset, currentStep, navigateToStep }
     </Card>
   );
 }
+

@@ -64,9 +64,11 @@ export default function CrearKitPage() {
         termicaPhrase: defaultMugType.value === 'termica' ? '' : undefined,
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run once on mount to set initial defaults
 
   const updateCoffee = (coffee: Partial<CoffeeSelection>) => setKitConfig(prev => ({ ...prev, coffee: { ...prev.coffee, ...coffee } }));
+  
   const updateAddon = (addon: Partial<AddonSelection>) => {
     const newType = addon.type === undefined ? kitConfig.addon.type : addon.type;
     const addonConfig = findOption(ADDON_OPTIONS, newType);
@@ -85,6 +87,7 @@ export default function CrearKitPage() {
       }
     }));
   };
+
   const updateMug = (mug: Partial<MugSelection>) => {
     const newType = mug.type === undefined ? kitConfig.mug.type : mug.type;
     const mugConfig = findOption(MUG_OPTIONS, newType);
@@ -137,13 +140,23 @@ export default function CrearKitPage() {
 
   const navigateToStep = (step: number) => {
     if (step >= 1 && step <= TOTAL_STEPS) {
-      if (step <= currentStep || step === 1) {
+      if (step <= currentStep || step === 1) { // Allow navigation to previous steps or step 1
         setCurrentStep(step);
-      } else if (step === currentStep + 1 && isStepValid(currentStep)) {
-        setCurrentStep(step);
+      } else { // For navigating forward, check if all preceding steps are valid
+        let canNavigate = true;
+        for (let i = 1; i < step; i++) {
+          if (!isStepValid(i)) {
+            canNavigate = false;
+            break;
+          }
+        }
+        if (canNavigate) {
+          setCurrentStep(step);
+        }
       }
     }
   };
+  
 
   const isStepValid = (step: number): boolean => {
     switch (step) {
@@ -160,7 +173,7 @@ export default function CrearKitPage() {
         if (!kitConfig.mug.type) return false;
         const mugConfig = findOption(MUG_OPTIONS, kitConfig.mug.type);
         if (mugConfig?.variations && mugConfig.variations.length > 0 && !kitConfig.mug.variation) return false;
-        if (mugConfig?.isPersonalizable && typeof kitConfig.mug.termicaMarked === 'undefined') return false;
+        if (mugConfig?.isPersonalizable && typeof kitConfig.mug.termicaMarked === 'undefined') return false; // Should be true or false if personalizable
         if (mugConfig?.isPersonalizable && kitConfig.mug.termicaMarked && !kitConfig.mug.termicaPhrase) return false;
         return true;
       }
@@ -209,9 +222,16 @@ export default function CrearKitPage() {
         </div>
 
         <aside className="lg:w-1/3">
-          <OrderSummary kitConfig={kitConfig} onReset={resetKit} currentStep={currentStep} navigateToStep={navigateToStep} />
+          <OrderSummary 
+            kitConfig={kitConfig} 
+            onReset={resetKit} 
+            currentStep={currentStep} 
+            navigateToStep={navigateToStep}
+            isStepValid={isStepValid} // Pass isStepValid here
+          />
         </aside>
       </div>
     </div>
   );
 }
+
