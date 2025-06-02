@@ -1,9 +1,15 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
 import type { KitConfig, CartItem } from '@/types';
 
 const CART_STORAGE_KEY = 'kawaCoffeeCart';
+
+// --- Module-level store ---
+let cartMemoryState: CartItem[] = [];
+const cartListeners: Array<(state: CartItem[]) => void> = [];
+let clientStoreInitialized = false; // To track if localStorage has been loaded
 
 function loadCartFromStorage(): CartItem[] {
   if (typeof window === 'undefined') {
@@ -14,7 +20,7 @@ function loadCartFromStorage(): CartItem[] {
     return storedCart ? JSON.parse(storedCart) : [];
   } catch (error) {
     console.error("Failed to load cart from storage:", error);
-    // corrupted data, clear it
+    // If parsing fails, clear corrupted data
     localStorage.removeItem(CART_STORAGE_KEY);
     return [];
   }
@@ -31,48 +37,84 @@ function saveCartToStorage(cart: CartItem[]) {
   }
 }
 
+// Initialize store once on the client when the module is first imported
+if (typeof window !== 'undefined' && !clientStoreInitialized) {
+  cartMemoryState = loadCartFromStorage();
+  clientStoreInitialized = true;
+}
+
+// Function to update the shared state, persist it, and notify listeners
+function updateSharedCartState(updater: (prevState: CartItem[]) => CartItem[]) {
+  cartMemoryState = updater(cartMemoryState);
+  saveCartToStorage(cartMemoryState);
+  // Notify all listeners with a new array reference (snapshot)
+  const newStateSnapshot = [...cartMemoryState];
+  cartListeners.forEach(listener => listener(newStateSnapshot));
+}
+// --- End Module-level store ---
+
 export function useCartStore() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartLoaded, setIsCartLoaded] = useState(false);
+  // Initialize local state with a snapshot of the current shared state
+  const [cartItems, setLocalCartItems] = useState<CartItem[]>(() => [...cartMemoryState]);
+  // isCartLoaded reflects if the shared store has been initialized from localStorage
+  const [isCartLoaded, setIsCartLoaded] = useState(clientStoreInitialized);
 
   useEffect(() => {
-    setCartItems(loadCartFromStorage());
-    setIsCartLoaded(true);
-  }, []);
-
-  useEffect(() => {
-    if (isCartLoaded) { 
-      saveCartToStorage(cartItems);
+    // This effect runs on mount to handle client-side specifics and subscribe to updates.
+    if (typeof window !== 'undefined') {
+        // If the shared store wasn't initialized when useState ran (e.g. module just loaded on client),
+        // ensure it is initialized and local state is synced.
+        if (!clientStoreInitialized) {
+            cartMemoryState = loadCartFromStorage();
+            clientStoreInitialized = true;
+        }
+        // Sync local state if it somehow diverged or for initial client load.
+        setLocalCartItems([...cartMemoryState]);
+        setIsCartLoaded(true); // Mark as loaded for this instance
     }
-  }, [cartItems, isCartLoaded]);
+
+    // Define the listener for this specific instance of the hook
+    const currentListener = (newState: CartItem[]) => {
+        setLocalCartItems(newState); // newState is already a snapshot
+    };
+    
+    cartListeners.push(currentListener); // Subscribe
+    
+    // Clean up listener on component unmount
+    return () => {
+      const index = cartListeners.indexOf(currentListener);
+      if (index > -1) {
+        cartListeners.splice(index, 1);
+      }
+    };
+  }, []); // Empty dependency array ensures this effect runs once on mount and cleans up on unmount
 
   const addToCart = useCallback((kit: Omit<KitConfig, 'id'>) => {
-    setCartItems(prevItems => {
-      const newKit: CartItem = { 
-        ...kit, 
+    updateSharedCartState(prevItems => {
+      const newKit: CartItem = {
+        ...kit,
         id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
         quantity: 1, // Default quantity
       };
-      // For simplicity, we add as a new item even if identical.
-      // Future enhancement: check if identical item exists and increment quantity.
       return [...prevItems, newKit];
     });
   }, []);
 
   const removeFromCart = useCallback((kitId: string) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== kitId));
+    updateSharedCartState(prevItems => prevItems.filter(item => item.id !== kitId));
   }, []);
 
   const clearCart = useCallback(() => {
-    setCartItems([]);
+    updateSharedCartState(() => []); // Pass a function that returns an empty array
   }, []);
   
   const getCartItemCount = useCallback(() => {
-    return cartItems.reduce((count, item) => count + item.quantity, 0);
+    // Calculates based on the local, synced cartItems state
+    return cartItems.reduce((count, item) => count + (item.quantity || 0), 0);
   }, [cartItems]);
 
   return {
-    cartItems,
+    cartItems, // This is the local state, kept in sync with cartMemoryState
     isCartLoaded,
     addToCart,
     removeFromCart,
