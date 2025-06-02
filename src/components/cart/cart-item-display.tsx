@@ -41,10 +41,10 @@ export function CartItemDisplay({ item, onRemove }: CartItemDisplayProps) {
         <div className="w-1/4 p-2 flex items-center justify-center bg-secondary/20">
           <Image 
             src={displayImageUrl} 
-            alt={item.displayName} 
+            alt={item.displayName || 'Imagen del artículo en el carrito'} 
             width={100} 
             height={100} 
-            className="rounded-md object-contain" // Changed object-cover to object-contain
+            className="rounded-md object-contain"
             data-ai-hint={imageHint}
             />
         </div>
@@ -71,4 +71,3 @@ export function CartItemDisplay({ item, onRemove }: CartItemDisplayProps) {
     </Card>
   );
 }
-
