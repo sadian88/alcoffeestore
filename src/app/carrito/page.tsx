@@ -2,6 +2,7 @@
 "use client";
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // Import useRouter
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -23,6 +24,7 @@ import type { CartItem } from '@/types';
 export default function CarritoPage() {
   const { cartItems, removeFromCart, clearCart, getCartItemCount, isCartLoaded } = useCartStore();
   const { toast } = useToast();
+  const router = useRouter(); // Initialize useRouter
 
   const handleClearCart = () => {
     clearCart();
@@ -106,11 +108,8 @@ export default function CarritoPage() {
     window.open(whatsappUrl, '_blank');
     
     clearCart();
-    toast({
-      title: "Pedido Preparado para WhatsApp 📲",
-      description: "Tu pedido ha sido enviado a WhatsApp. Por favor, completa la orden allí.",
-      className: "bg-primary/10 border-primary text-primary-foreground duration-5000",
-    });
+    // Redirect to a confirmation page instead of just showing a toast here
+    router.push('/pedido-enviado');
   };
 
 

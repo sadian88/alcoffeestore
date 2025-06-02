@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // Import useRouter
 import type { KitConfig, CoffeeSelection, AddonSelection, MugSelection } from '@/types';
 import { Button } from '@/components/ui/button';
 import { StepCoffee } from '@/components/kit-builder/step-coffee';
@@ -9,7 +10,9 @@ import { StepAddon } from '@/components/kit-builder/step-addon';
 import { StepMug } from '@/components/kit-builder/step-mug';
 import { OrderSummary } from '@/components/kit-builder/order-summary';
 import { KitProgressBar } from '@/components/kit-builder/kit-progress-bar';
-import { ArrowLeft, ArrowRight, CheckSquare } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ShoppingCart } from 'lucide-react'; // Replaced CheckSquare with ShoppingCart
+import { useCartStore } from '@/hooks/use-cart-store'; // Import useCartStore
+import { useToast } from '@/hooks/use-toast'; // Import useToast
 import { MUG_OPTIONS, ADDON_OPTIONS, PACKAGING_COLORS, COFFEE_SIZES, findOption } from '@/lib/constants';
 
 const initialCoffeeState: CoffeeSelection = { size: '', packagingColor: '' };
@@ -36,8 +39,12 @@ export default function CrearKitPage() {
     mug: { ...initialMugState }
   });
 
+  const router = useRouter();
+  const { addToCart } = useCartStore();
+  const { toast } = useToast();
+
+
   useEffect(() => {
-    // Set default coffee selections
     if (!kitConfig.coffee.size && COFFEE_SIZES.length > 0) {
       updateCoffee({ size: COFFEE_SIZES[0].value });
     }
@@ -45,7 +52,6 @@ export default function CrearKitPage() {
       updateCoffee({ packagingColor: PACKAGING_COLORS[0].value });
     }
 
-    // Set default addon selections if not already set
     if (!kitConfig.addon.type && ADDON_OPTIONS.length > 0) {
       const defaultAddonType = ADDON_OPTIONS[0];
       updateAddon({
@@ -54,7 +60,6 @@ export default function CrearKitPage() {
       });
     }
 
-    // Set default mug selections if not already set
     if (!kitConfig.mug.type && MUG_OPTIONS.length > 0) {
       const defaultMugType = MUG_OPTIONS[0];
       updateMug({
@@ -65,7 +70,7 @@ export default function CrearKitPage() {
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run once on mount to set initial defaults
+  }, []); 
 
   const updateCoffee = (coffee: Partial<CoffeeSelection>) => setKitConfig(prev => ({ ...prev, coffee: { ...prev.coffee, ...coffee } }));
   
@@ -140,20 +145,7 @@ export default function CrearKitPage() {
 
   const navigateToStep = (step: number) => {
     if (step >= 1 && step <= TOTAL_STEPS) {
-      if (step <= currentStep || step === 1) { // Allow navigation to previous steps or step 1
-        setCurrentStep(step);
-      } else { // For navigating forward, check if all preceding steps are valid
-        let canNavigate = true;
-        for (let i = 1; i < step; i++) {
-          if (!isStepValid(i)) {
-            canNavigate = false;
-            break;
-          }
-        }
-        if (canNavigate) {
-          setCurrentStep(step);
-        }
-      }
+      setCurrentStep(step);
     }
   };
   
@@ -173,13 +165,40 @@ export default function CrearKitPage() {
         if (!kitConfig.mug.type) return false;
         const mugConfig = findOption(MUG_OPTIONS, kitConfig.mug.type);
         if (mugConfig?.variations && mugConfig.variations.length > 0 && !kitConfig.mug.variation) return false;
-        if (mugConfig?.isPersonalizable && typeof kitConfig.mug.termicaMarked === 'undefined') return false; // Should be true or false if personalizable
+        if (mugConfig?.isPersonalizable && typeof kitConfig.mug.termicaMarked === 'undefined') return false;
         if (mugConfig?.isPersonalizable && kitConfig.mug.termicaMarked && !kitConfig.mug.termicaPhrase) return false;
         return true;
       }
       default: return false;
     }
   }
+
+  const isEntireKitValid = () => isStepValid(1) && isStepValid(2) && isStepValid(3);
+
+  const handleAddToCartAndNavigate = () => {
+    if (!isEntireKitValid()) {
+      toast({
+        title: "Kit Incompleto",
+        description: "Por favor, completa todos los pasos de tu kit.",
+        variant: "destructive",
+      });
+      if (!isStepValid(1)) navigateToStep(1);
+      else if (!isStepValid(2)) navigateToStep(2);
+      else if (!isStepValid(3)) navigateToStep(3);
+      return;
+    }
+
+    const kitName = `Kit Personalizado ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    addToCart({ ...kitConfig, name: kitName, isPreset: false });
+    toast({
+      title: "¡Kit Agregado! 💖",
+      description: `${kitName} ha sido añadido a tu carrito.`,
+      className: "bg-primary/10 border-primary text-primary-foreground",
+    });
+    resetKit();
+    router.push('/carrito');
+  };
+
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -211,11 +230,11 @@ export default function CrearKitPage() {
               </Button>
             ) : (
               <Button
-                onClick={() => { /* Potentially scroll to summary or final review action */ }}
-                disabled={!isStepValid(currentStep)}
-                className="text-lg px-6 py-3 bg-green-500 hover:bg-green-600"
+                onClick={handleAddToCartAndNavigate}
+                disabled={!isEntireKitValid()}
+                className="text-lg px-6 py-3 bg-accent hover:bg-accent/90 text-accent-foreground"
               >
-                Revisar Kit Completo <CheckSquare className="ml-2 h-5 w-5" />
+                Agregar y Ver Carrito <ShoppingCart className="ml-2 h-5 w-5" />
               </Button>
             )}
           </div>
@@ -227,11 +246,10 @@ export default function CrearKitPage() {
             onReset={resetKit} 
             currentStep={currentStep} 
             navigateToStep={navigateToStep}
-            isStepValid={isStepValid} // Pass isStepValid here
+            isStepValid={isStepValid}
           />
         </aside>
       </div>
     </div>
   );
 }
-

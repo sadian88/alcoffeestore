@@ -6,18 +6,21 @@ import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useIsClient } from '@/hooks/use-is-client';
-import { Logo } from '@/components/icons/logo'; // Import the Logo component
+import { Logo } from '@/components/icons/logo'; 
 
 export function Header() {
-  const { getCartItemCount } = useCartStore();
+  // Get cartItems directly to ensure re-render when cartItems change
+  const { cartItems } = useCartStore(); 
   const isClient = useIsClient();
-  const itemCount = isClient ? getCartItemCount() : 0;
+  
+  // Calculate itemCount based on cartItems
+  const itemCount = isClient ? cartItems.reduce((count, item) => count + (item.quantity || 0), 0) : 0;
 
   return (
     <header className="bg-card shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-2 text-primary hover:opacity-80 transition-opacity">
-          <Logo className="h-7 md:h-8 w-auto" /> {/* Use the Logo component */}
+          <Logo className="h-7 md:h-8 w-auto" /> 
         </Link>
         <nav>
           <Link href="/carrito" passHref>
