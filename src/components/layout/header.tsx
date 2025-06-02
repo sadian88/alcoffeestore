@@ -2,10 +2,11 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Coffee } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useIsClient } from '@/hooks/use-is-client';
+import { Logo } from '@/components/icons/logo'; // Import the Logo component
 
 export function Header() {
   const { getCartItemCount } = useCartStore();
@@ -15,9 +16,8 @@ export function Header() {
   return (
     <header className="bg-card shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link href="/" className="flex items-center gap-2 text-2xl font-headline font-semibold text-primary hover:text-primary/80 transition-colors">
-          <Coffee className="w-8 h-8" />
-          <span>alCoffee</span>
+        <Link href="/" className="flex items-center gap-2 text-primary hover:opacity-80 transition-opacity">
+          <Logo className="h-7 md:h-8 w-auto" /> {/* Use the Logo component */}
         </Link>
         <nav>
           <Link href="/carrito" passHref>
@@ -36,5 +36,3 @@ export function Header() {
     </header>
   );
 }
-
-    
