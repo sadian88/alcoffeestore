@@ -57,7 +57,7 @@ export function CartItemDisplay({ item, onRemove }: CartItemDisplayProps) {
             </Button>
           </CardHeader>
           <CardContent className="text-xs text-muted-foreground space-y-1 px-4 pb-2">
-            {item.components.map((component, index) => (
+            {(item.components || []).map((component, index) => (
               <ComponentDetailDisplay key={`${item.id}-comp-${index}`} component={component} />
             ))}
           </CardContent>
@@ -71,3 +71,4 @@ export function CartItemDisplay({ item, onRemove }: CartItemDisplayProps) {
     </Card>
   );
 }
+
