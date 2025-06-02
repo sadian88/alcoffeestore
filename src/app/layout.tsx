@@ -1,11 +1,12 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { AppLayout } from '@/components/layout/app-layout'; // Import AppLayout
 import { Toaster } from "@/components/ui/toaster"; // Import Toaster
 
 export const metadata: Metadata = {
-  title: 'Kawa-Coffee Kit',
-  description: 'Arma tu kit de café personalizado o elige uno prediseñado.',
+  title: 'alCoffee - Amor en cada taza',
+  description: 'Arma tu kit de café personalizado o elige uno prediseñado. Amor en cada taza.',
 };
 
 export default function RootLayout({
@@ -29,3 +30,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    

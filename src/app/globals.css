@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -109,3 +110,36 @@ body {
     @apply border-input-border;
   }
 }
+
+@layer utilities {
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+  .animation-delay-6000 {
+    animation-delay: 6s;
+  }
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(15px, -20px) scale(1.05) rotate(5deg);
+  }
+  66% {
+    transform: translate(-10px, 15px) scale(0.95) rotate(-5deg);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+}
+
+.animate-blob {
+  animation: blob 12s infinite ease-in-out;
+}
+
+    

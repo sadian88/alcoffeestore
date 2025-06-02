@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -16,7 +17,7 @@ export function Header() {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-2 text-2xl font-headline font-semibold text-primary hover:text-primary/80 transition-colors">
           <Coffee className="w-8 h-8" />
-          <span>Kawa-Coffee Kit</span>
+          <span>alCoffee</span>
         </Link>
         <nav>
           <Link href="/carrito" passHref>
@@ -35,3 +36,5 @@ export function Header() {
     </header>
   );
 }
+
+    
