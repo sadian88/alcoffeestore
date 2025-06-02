@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MUG_OPTIONS, THERMAL_MUG_CUSTOMIZATION_OPTIONS, findOption } from '@/lib/constants';
 import { cn } from '@/lib/utils';
-import { Coffee } from 'lucide-react';
+import { Coffee as CoffeeIcon, Leaf, Rocket } from 'lucide-react'; 
 
 interface StepMugProps {
   mug: MugSelection;
@@ -23,7 +23,7 @@ export function StepMug({ mug, onChange }: StepMugProps) {
     const newTypeConfig = findOption(MUG_OPTIONS, newType);
     onChange({
       type: newType,
-      variation: newTypeConfig?.variations?.[0]?.value || '', // Default to first variation if available
+      variation: newTypeConfig?.variations?.[0]?.value || '', 
       termicaMarked: newType === 'termica' ? mug.termicaMarked ?? false : undefined,
       termicaPhrase: newType === 'termica' ? mug.termicaPhrase : '',
     });
@@ -37,7 +37,7 @@ export function StepMug({ mug, onChange }: StepMugProps) {
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-2xl font-headline flex items-center gap-2">
-          <Coffee className="w-7 h-7 text-primary" /> Paso 3: Elige tu Taza
+          <CoffeeIcon className="w-7 h-7 text-primary" /> Paso 3: Elige tu Taza
         </CardTitle>
         <CardDescription>
           Escoge la taza perfecta para disfrutar tu café. Selecciona el tipo y luego el diseño que más te guste.
@@ -88,7 +88,7 @@ export function StepMug({ mug, onChange }: StepMugProps) {
                 >
                   <RadioGroupItem value={variation.value} id={`mug-variation-${variation.value}`} className="sr-only" />
                   <Image src={variation.image} alt={variation.label} width={80} height={80} className="rounded-md object-cover" data-ai-hint={variation.dataAiHint} />
-                  <span className="text-xs text-center">{variation.label}</span>
+                  <span className="text-xs text-center">{variation.label} (${variation.price.toFixed(2)})</span>
                 </Label>
               ))}
             </RadioGroup>
@@ -97,7 +97,12 @@ export function StepMug({ mug, onChange }: StepMugProps) {
 
         {selectedMugTypeConfig?.isPersonalizable && mug.type === 'termica' && (
           <div className="space-y-4 animate-in fade-in duration-300 pt-4 border-t mt-6">
-            <Label className="text-lg font-medium">Personalización Taza Térmica:</Label>
+            <Label className="text-lg font-medium">
+              Personalización Taza Térmica:
+              {selectedMugTypeConfig.personalizationFee && selectedMugTypeConfig.personalizationFee > 0 && (
+                <span className="text-xs text-muted-foreground font-normal"> (Costo adicional por personalización: ${selectedMugTypeConfig.personalizationFee.toFixed(2)})</span>
+              )}
+            </Label>
             <RadioGroup
               value={mug.termicaMarked ? 'marcada' : 'sin_marcar'}
               onValueChange={(value) => {

@@ -81,13 +81,13 @@ export function StepAddon({ addon, onChange }: StepAddonProps) {
                   htmlFor={`addon-variation-${variation.value}`}
                   className={cn(
                     "flex flex-col items-center justify-center space-y-2 border-2 p-3 rounded-lg cursor-pointer transition-all hover:border-primary",
-                    "aspect-[4/5]", // Slightly taller for agenda images
+                    "aspect-[4/5]", 
                     addon.variation === variation.value ? 'border-primary bg-primary/10 ring-2 ring-primary' : 'border-input-border'
                   )}
                 >
                   <RadioGroupItem value={variation.value} id={`addon-variation-${variation.value}`} className="sr-only" />
                   <Image src={variation.image} alt={variation.label} width={80} height={100} className="rounded-md object-contain" data-ai-hint={variation.dataAiHint}/>
-                  <span className="text-xs text-center">{variation.label}</span>
+                  <span className="text-xs text-center">{variation.label} (${variation.price.toFixed(2)})</span>
                 </Label>
               ))}
             </RadioGroup>
@@ -105,7 +105,11 @@ export function StepAddon({ addon, onChange }: StepAddonProps) {
               className="min-h-[100px]"
               maxLength={100}
             />
-            <p className="text-xs text-muted-foreground">Máximo 100 caracteres.</p>
+            <p className="text-xs text-muted-foreground">Máximo 100 caracteres.
+              {selectedAddonTypeConfig.descriptionFee && selectedAddonTypeConfig.descriptionFee > 0 && (
+                <span className="font-medium"> (Costo adicional por descripción: ${selectedAddonTypeConfig.descriptionFee.toFixed(2)})</span>
+              )}
+            </p>
           </div>
         )}
       </CardContent>

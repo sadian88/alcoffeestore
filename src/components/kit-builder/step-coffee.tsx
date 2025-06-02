@@ -44,7 +44,7 @@ export function StepCoffee({ coffee, onChange }: StepCoffeeProps) {
                 )}
               >
                 <RadioGroupItem value={size.value} id={`size-${size.value}`} />
-                <span>{size.label}</span>
+                <span>{size.label} (${size.price.toFixed(2)})</span>
               </Label>
             ))}
           </RadioGroup>
@@ -84,3 +84,4 @@ export function StepCoffee({ coffee, onChange }: StepCoffeeProps) {
     </Card>
   );
 }
+
