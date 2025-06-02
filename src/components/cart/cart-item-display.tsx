@@ -24,7 +24,7 @@ function ComponentDetailDisplay({ component }: { component: CartItemComponentDet
         {icon}
         {component.name}
       </span>
-      <span className="font-medium">${component.price.toFixed(2)}</span>
+      <span className="font-medium">${(component.price || 0).toFixed(2)}</span>
     </div>
   );
 }
@@ -63,7 +63,7 @@ export function CartItemDisplay({ item, onRemove }: CartItemDisplayProps) {
           </CardContent>
           <CardContent className="px-4 pb-4 pt-1">
              <p className="font-semibold text-sm text-accent-foreground mt-1">
-                Precio Total Artículo: ${item.totalPrice.toFixed(2)}
+                Precio Total Artículo: ${(item.totalPrice || 0).toFixed(2)}
             </p>
           </CardContent>
         </div>
