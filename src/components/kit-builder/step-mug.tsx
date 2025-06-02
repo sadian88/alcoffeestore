@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { MugSelection } from '@/types';
@@ -6,7 +7,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MUG_TYPES, THERMAL_MUG_OPTIONS } from '@/lib/constants';
-import { Coffee as CoffeeIcon, Leaf, Thermos } from 'lucide-react'; // Renamed to avoid conflict
+import { Coffee as CoffeeIcon, Leaf, Rocket } from 'lucide-react'; // Corrected Thermos to Rocket
 
 interface StepMugProps {
   mug: MugSelection;
@@ -16,7 +17,7 @@ interface StepMugProps {
 const mugIcons = {
   termica: <CoffeeIcon className="w-6 h-6" />,
   ecologica: <Leaf className="w-6 h-6" />,
-  termo: <Thermos className="w-6 h-6" />
+  termo: <Rocket className="w-6 h-6" />
 };
 
 export function StepMug({ mug, onChange }: StepMugProps) {
