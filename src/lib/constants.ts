@@ -100,6 +100,7 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     image: '/img/kits/love.png', 
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'rosa' },
+    cuchara: { type: 'cuchara', variation: 'cdorada' }, // Changed to dorada
     addon: { type: 'agenda', variation: 'floral' },
     mug: { type: 'ecologica', variation: 'rosa_pastel' },
   },
@@ -111,6 +112,7 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     image: '/img/kits/paz.png', 
     isPreset: true,
     coffee: { size: '150g', packagingColor: 'blanco' },
+    cuchara: { type: 'cuchara', variation: 'plata' }, // Kept as plata
     addon: { type: 'cuadro', variation: 'default', cuadroDescription: 'Sueña en Grande ✨' },
     mug: { type: 'termica', variation: 'blanca', termicaMarked: false },
   },
@@ -119,9 +121,10 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     name: 'Kit Gozo',
     description: 'Una explosión de alegría y sabor para iluminar tus días.',
     price: 85000,
-    image: '/img/kits/gozo.png', // Khaki background
+    image: '/img/kits/gozo.png',
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'blanco' },
+    cuchara: { type: 'cuchara', variation: 'cdorada' }, // Changed to dorada
     addon: { type: 'agenda', variation: 'estrellas' },
     mug: { type: 'ecologica', variation: 'verde_menta' },
   }

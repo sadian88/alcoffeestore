@@ -39,7 +39,8 @@ export interface PresetKit extends KitConfig {
   price: number;
   image: string;
   description: string;
-  addon: AddonSelection & { type: 'agenda' | 'cuadro' | 'cuchara' };
+  addon: AddonSelection & { type: 'agenda' | 'cuadro' };
+  cuchara: AddonSelection & { type: 'cuchara' };
   mug: MugSelection & { type: 'termica' | 'ecologica' | 'termo' };
 }
 
