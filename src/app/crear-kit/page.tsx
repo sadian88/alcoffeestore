@@ -28,7 +28,7 @@ import {
 
 const initialCoffeeState: CoffeeSelection = { size: '', packagingColor: '' };
 const initialAddonState: AddonSelection = { type: '', variation: '', cuadroDescription: '' };
-const initialMugState: MugSelection = { type: '', variation: '', termicaMarked: false, termicaPhrase: '' };
+const initialMugState: MugSelection = { type: '', variation: '', termicaMarked: undefined, termicaPhrase: undefined };
 
 const initialKitConfig: Readonly<KitConfig> = {
   name: 'Kit Personalizado',
@@ -71,7 +71,8 @@ export function calculateMugPrice(mug: MugSelection): number {
     if (mugVariationInfo) {
       price += mugVariationInfo.price;
     }
-    if (mugTypeInfo.value === 'termica' && mug.termicaMarked && mugTypeInfo.personalizationFee) {
+    // Aplica la tarifa de personalización si la taza es personalizable y está marcada
+    if (mugTypeInfo.isPersonalizable && mug.termicaMarked && mugTypeInfo.personalizationFee) {
       price += mugTypeInfo.personalizationFee;
     }
   }
@@ -126,11 +127,11 @@ export default function CrearKitPage() {
     }
 
     if (!newConfig.mug.type && MUG_OPTIONS.length > 0) {
-      const defaultMugType = MUG_OPTIONS[0];
-      newConfig.mug.type = defaultMugType.value;
-      newConfig.mug.variation = defaultMugType.variations?.[0]?.value || '';
-      newConfig.mug.termicaMarked = defaultMugType.value === 'termica' ? false : undefined;
-      newConfig.mug.termicaPhrase = defaultMugType.value === 'termica' ? '' : undefined;
+      const defaultMugType = findOption(MUG_OPTIONS, MUG_OPTIONS[0].value);
+      newConfig.mug.type = defaultMugType?.value || '';
+      newConfig.mug.variation = defaultMugType?.variations?.[0]?.value || '';
+      newConfig.mug.termicaMarked = defaultMugType?.isPersonalizable ? false : undefined;
+      newConfig.mug.termicaPhrase = defaultMugType?.isPersonalizable ? '' : undefined;
       updated = true;
     }
     if (updated) {
@@ -174,8 +175,8 @@ export default function CrearKitPage() {
         ...mugUpdate,
         type: newType,
         variation: newVariation,
-        termicaMarked: newType === 'termica' ? (mugUpdate.termicaMarked ?? prev.mug.termicaMarked ?? false) : undefined,
-        termicaPhrase: newType === 'termica' ? (mugUpdate.termicaPhrase ?? prev.mug.termicaPhrase) : undefined,
+        termicaMarked: mugConfig?.isPersonalizable ? (mugUpdate.termicaMarked ?? prev.mug.termicaMarked ?? false) : undefined,
+        termicaPhrase: mugConfig?.isPersonalizable ? (mugUpdate.termicaPhrase ?? prev.mug.termicaPhrase) : undefined,
       }
     }));
   };
@@ -190,12 +191,12 @@ export default function CrearKitPage() {
       cuadroDescription: '' 
     };
     
-    const defaultMugType = MUG_OPTIONS[0];
+    const defaultMugTypeConfig = findOption(MUG_OPTIONS, MUG_OPTIONS[0]?.value || '');
     const newMugState = { 
-      type: defaultMugType?.value || '', 
-      variation: defaultMugType?.variations?.[0]?.value || '',
-      termicaMarked: defaultMugType?.value === 'termica' ? false : undefined,
-      termicaPhrase: defaultMugType?.value === 'termica' ? '' : undefined
+      type: defaultMugTypeConfig?.value || '', 
+      variation: defaultMugTypeConfig?.variations?.[0]?.value || '',
+      termicaMarked: defaultMugTypeConfig?.isPersonalizable ? false : undefined,
+      termicaPhrase: defaultMugTypeConfig?.isPersonalizable ? '' : undefined
     };
 
     const newKit = {
@@ -234,8 +235,7 @@ export default function CrearKitPage() {
         const mugConfig = findOption(MUG_OPTIONS, kitConfig.mug.type);
         if (mugConfig?.variations && mugConfig.variations.length > 0 && !kitConfig.mug.variation) return false;
         if (mugConfig?.isPersonalizable && typeof kitConfig.mug.termicaMarked === 'undefined') return false;
-        // If termicaMarked is true, termicaPhrase must not be empty (if we want to enforce this, add: && (!kitConfig.mug.termicaMarked || (kitConfig.mug.termicaMarked && !!kitConfig.mug.termicaPhrase)))
-        // For now, allowing empty phrase if marked, as fee is for marking itself.
+        // Si termicaMarked es true, termicaPhrase puede o no estar vacía.
         return true;
       }
       default: return false;
@@ -283,9 +283,9 @@ export default function CrearKitPage() {
     if (variationInfo && (variationInfo.value !== 'default' || (mugTypeInfo?.variations?.length ?? 0) > 1)) {
       name += `, ${variationInfo.label}`;
     }
-    if (selection.type === 'termica' && selection.termicaMarked && selection.termicaPhrase) {
+    if (mugTypeInfo?.isPersonalizable && selection.termicaMarked && selection.termicaPhrase) {
       name += ` (Frase: "${selection.termicaPhrase}")`;
-    } else if (selection.type === 'termica' && selection.termicaMarked) {
+    } else if (mugTypeInfo?.isPersonalizable && selection.termicaMarked) {
       name += ` (Personalizada)`;
     }
     return {

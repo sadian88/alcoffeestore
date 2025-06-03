@@ -28,12 +28,12 @@ export const MUG_OPTIONS: ConfigurableItem[] = [
     label: 'Taza Térmica',
     icon: CoffeeIcon,
     isPersonalizable: true,
-    personalizationFee: 2, // Example fee
+    personalizationFee: 10000, // 35000 (total personalizado) - 25000 (base)
     variations: [
-      { value: 'negra', label: 'Negra', image: 'https://placehold.co/120x120/333333/FFFFFF?text=T.Negra', dataAiHint: 'black mug', price: 12 },
-      { value: 'blanca', label: 'Blanca', image: 'https://placehold.co/120x120/F5F5F5/333333?text=T.Blanca', dataAiHint: 'white mug', price: 12 },
-      { value: 'rosa', label: 'Rosa', image: 'https://placehold.co/120x120/FFC0CB/333333?text=T.Rosa', dataAiHint: 'pink mug', price: 13 },
-      { value: 'gris', label: 'Gris', image: 'https://placehold.co/120x120/A9A9A9/FFFFFF?text=T.Gris', dataAiHint: 'gray mug', price: 11 },
+      { value: 'negra', label: 'Negra', image: 'https://placehold.co/120x120/333333/FFFFFF?text=T.Negra', dataAiHint: 'black mug', price: 25000 },
+      { value: 'blanca', label: 'Blanca', image: 'https://placehold.co/120x120/F5F5F5/333333?text=T.Blanca', dataAiHint: 'white mug', price: 25000 },
+      { value: 'rosa', label: 'Rosa', image: 'https://placehold.co/120x120/FFC0CB/333333?text=T.Rosa', dataAiHint: 'pink mug', price: 25000 },
+      { value: 'gris', label: 'Gris', image: 'https://placehold.co/120x120/A9A9A9/FFFFFF?text=T.Gris', dataAiHint: 'gray mug', price: 25000 },
     ],
   },
   {
@@ -41,18 +41,20 @@ export const MUG_OPTIONS: ConfigurableItem[] = [
     label: 'Taza Ecológica',
     icon: Leaf,
     variations: [
-      { value: 'natural', label: 'Natural', image: 'https://placehold.co/120x120/DEB887/333333?text=Eco+Natural', dataAiHint: 'bamboo cup', price: 9 },
-      { value: 'rosa_pastel', label: 'Rosa Pastel', image: 'https://placehold.co/120x120/FFD1DC/333333?text=Eco+Rosa', dataAiHint: 'pastel_pink cup', price: 10 },
-      { value: 'azul_cielo', label: 'Azul Cielo', image: 'https://placehold.co/120x120/ADD8E6/333333?text=Eco+Azul', dataAiHint: 'sky_blue cup', price: 10 },
-      { value: 'verde_menta', label: 'Verde Menta', image: 'https://placehold.co/120x120/98FB98/333333?text=Eco+Verde', dataAiHint: 'mint_green cup', price: 10 },
+      { value: 'natural', label: 'Natural', image: 'https://placehold.co/120x120/DEB887/333333?text=Eco+Natural', dataAiHint: 'bamboo cup', price: 20000 },
+      { value: 'rosa_pastel', label: 'Rosa Pastel', image: 'https://placehold.co/120x120/FFD1DC/333333?text=Eco+Rosa', dataAiHint: 'pastel_pink cup', price: 20000 },
+      { value: 'azul_cielo', label: 'Azul Cielo', image: 'https://placehold.co/120x120/ADD8E6/333333?text=Eco+Azul', dataAiHint: 'sky_blue cup', price: 20000 },
+      { value: 'verde_menta', label: 'Verde Menta', image: 'https://placehold.co/120x120/98FB98/333333?text=Eco+Verde', dataAiHint: 'mint_green cup', price: 20000 },
     ],
   },
   {
     value: 'termo',
     label: 'Termo Viajero',
     icon: Rocket,
+    isPersonalizable: true, // Habilitar personalización
+    personalizationFee: 7000, // 27000 (total personalizado) - 20000 (base)
     variations: [
-      { value: 'default', label: 'Estándar', image: 'https://placehold.co/120x120/778899/FFFFFF?text=Termo', dataAiHint: 'travel thermos', price: 15 }
+      { value: 'default', label: 'Estándar', image: 'https://placehold.co/120x120/778899/FFFFFF?text=Termo', dataAiHint: 'travel thermos', price: 20000 }
     ],
   },
 ];
@@ -63,9 +65,9 @@ export const ADDON_OPTIONS: ConfigurableItem[] = [
     label: 'Agenda Kawaii',
     icon: BookOpen,
     variations: [
-      { value: 'floral', label: 'Floral', image: 'https://placehold.co/120x150/FFB6C1/4A4A4A?text=Agenda+Floral', dataAiHint: 'floral planner', price: 7 },
-      { value: 'estrellas', label: 'Estrellas', image: 'https://placehold.co/120x150/ADD8E6/4A4A4A?text=Agenda+Estrellas', dataAiHint: 'stars planner', price: 7 },
-      { value: 'topos', label: 'Topos', image: 'https://placehold.co/120x150/FFFFE0/4A4A4A?text=Agenda+Topos', dataAiHint: 'dots planner', price: 6 },
+      { value: 'floral', label: 'Floral', image: 'https://placehold.co/120x150/FFB6C1/4A4A4A?text=Agenda+Floral', dataAiHint: 'floral planner', price: 14000 },
+      { value: 'estrellas', label: 'Estrellas', image: 'https://placehold.co/120x150/ADD8E6/4A4A4A?text=Agenda+Estrellas', dataAiHint: 'stars planner', price: 14000 },
+      { value: 'topos', label: 'Topos', image: 'https://placehold.co/120x150/FFFFE0/4A4A4A?text=Agenda+Topos', dataAiHint: 'dots planner', price: 14000 },
     ],
   },
   {
@@ -73,9 +75,9 @@ export const ADDON_OPTIONS: ConfigurableItem[] = [
     label: 'Cuadro Decorativo',
     icon: Frame,
     requiresDescription: true,
-    descriptionFee: 3, // Example fee
+    descriptionFee: 3000, // Costo por descripción
     variations: [
-      { value: 'default', label: 'Estándar', image: 'https://placehold.co/120x120/D2B48C/FFFFFF?text=Cuadro', dataAiHint: 'decorative frame', price: 10 }
+      { value: 'default', label: 'Estándar', image: 'https://placehold.co/120x120/D2B48C/FFFFFF?text=Cuadro', dataAiHint: 'decorative frame', price: 11000 } // Base + desc. fee = 14000
     ],
   },
   {
@@ -83,7 +85,7 @@ export const ADDON_OPTIONS: ConfigurableItem[] = [
     label: 'Cuchara Clip Dorada',
     icon: Paperclip,
     variations: [
-      { value: 'default', label: 'Dorada', image: 'https://placehold.co/120x120/FFD700/4A4A4A?text=Cuchara', dataAiHint: 'gold spoon', price: 4 }
+      { value: 'default', label: 'Dorada', image: 'https://placehold.co/120x120/FFD700/4A4A4A?text=Cuchara', dataAiHint: 'gold spoon', price: 17000 }
     ],
   },
 ];
@@ -93,7 +95,7 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     id: 'preset1',
     name: 'Kit Mañanero Kawaii',
     description: 'Empieza tu día con dulzura, energía y un toque adorable.',
-    price: 25.99, // This is the fixed price for the preset kit
+    price: 25.99, // Este es el precio fijo para el kit prediseñado
     image: 'https://placehold.co/300x300/FFC0CB/4A4A4A?text=Kit+Alegre',
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'rosa' },
@@ -104,7 +106,7 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     id: 'preset2',
     name: 'Kit Relax Pastel',
     description: 'Un momento de calma y sabor con tu café favorito.',
-    price: 29.50, // Fixed price
+    price: 29.50, // Precio fijo
     image: 'https://placehold.co/300x300/E6E6FA/4A4A4A?text=Kit+Relax',
     isPreset: true,
     coffee: { size: '150g', packagingColor: 'blanco' },
@@ -115,7 +117,7 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     id: 'preset3',
     name: 'Kit Dorado Deluxe',
     description: 'Lujo y sabor para los paladares más exigentes.',
-    price: 35.00, // Fixed price
+    price: 35.00, // Precio fijo
     image: 'https://placehold.co/300x300/FFD700/4A4A4A?text=Kit+Deluxe',
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'dorado' },
@@ -125,8 +127,8 @@ export const PRESET_KITS_DATA: PresetKit[] = [
 ];
 
 export const COFFEE_SIZES: { value: '150g' | '250g'; label: string; price: number }[] = [
-  { value: '150g', label: '150 gramos', price: 5 },
-  { value: '250g', label: '250 gramos', price: 8 },
+  { value: '150g', label: '150 gramos', price: 17000 },
+  { value: '250g', label: '250 gramos', price: 26000 },
 ];
 
 // PACKAGING_COLORS do not have their own price, it's part of coffee.

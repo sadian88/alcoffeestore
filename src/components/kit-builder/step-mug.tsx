@@ -24,8 +24,8 @@ export function StepMug({ mug, onChange }: StepMugProps) {
     onChange({
       type: newType,
       variation: newTypeConfig?.variations?.[0]?.value || '', 
-      termicaMarked: newType === 'termica' ? mug.termicaMarked ?? false : undefined,
-      termicaPhrase: newType === 'termica' ? mug.termicaPhrase : '',
+      termicaMarked: newTypeConfig?.isPersonalizable ? mug.termicaMarked ?? false : undefined,
+      termicaPhrase: newTypeConfig?.isPersonalizable ? mug.termicaPhrase : undefined,
     });
   };
 
@@ -95,10 +95,10 @@ export function StepMug({ mug, onChange }: StepMugProps) {
           </div>
         )}
 
-        {selectedMugTypeConfig?.isPersonalizable && mug.type === 'termica' && (
+        {selectedMugTypeConfig?.isPersonalizable && (
           <div className="space-y-4 animate-in fade-in duration-300 pt-4 border-t mt-6">
             <Label className="text-lg font-medium">
-              Personalización Taza Térmica:
+              Personalización {selectedMugTypeConfig.label}:
               {selectedMugTypeConfig.personalizationFee && selectedMugTypeConfig.personalizationFee > 0 && (
                 <span className="text-xs text-muted-foreground font-normal"> (Costo adicional por personalización: ${selectedMugTypeConfig.personalizationFee.toFixed(2)})</span>
               )}
@@ -128,11 +128,11 @@ export function StepMug({ mug, onChange }: StepMugProps) {
 
             {mug.termicaMarked && (
               <div className="space-y-2 animate-in fade-in duration-300">
-                <Label htmlFor="termicaPhrase" className="text-lg font-medium">Frase para tu Taza Térmica:</Label>
+                <Label htmlFor="termicaPhrase" className="text-lg font-medium">Frase para tu {selectedMugTypeConfig.label}:</Label>
                 <Input
                   id="termicaPhrase"
                   placeholder="Escribe tu frase aquí (máx. 50 caracteres)"
-                  value={mug.termicaPhrase}
+                  value={mug.termicaPhrase || ''}
                   onChange={(e) => onChange({ termicaPhrase: e.target.value })}
                   maxLength={50}
                 />
@@ -144,3 +144,4 @@ export function StepMug({ mug, onChange }: StepMugProps) {
     </Card>
   );
 }
+
