@@ -96,7 +96,7 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     name: 'Kit Love',
     description: 'Empieza tu día con dulzura, energía y un toque adorable.',
     price: 25.99, 
-    image: 'https://placehold.co/300x300/FFC0CB/4A3B31?text=Kit+Love', // Updated text for placeholder
+    image: 'https://placehold.co/300x300/FFC0CB/4A3B31?text=Kit+Love', 
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'rosa' },
     addon: { type: 'agenda', variation: 'floral' },
@@ -107,7 +107,7 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     name: 'Kit Paz',
     description: 'Un momento de calma y sabor con tu café favorito.',
     price: 29.50, 
-    image: 'https://placehold.co/300x300/E6E6FA/4A3B31?text=Kit+Paz', // Updated text for placeholder
+    image: 'https://placehold.co/300x300/E6E6FA/4A3B31?text=Kit+Paz', 
     isPreset: true,
     coffee: { size: '150g', packagingColor: 'blanco' },
     addon: { type: 'cuadro', variation: 'default', cuadroDescription: 'Sueña en Grande ✨' },
@@ -118,12 +118,23 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     name: 'Kit Esperanza',
     description: 'Lujo y sabor para los paladares más exigentes.',
     price: 35.00, 
-    image: 'https://placehold.co/300x300/FFD700/4A3B31?text=Kit+Esperanza', // Updated text for placeholder
+    image: 'https://placehold.co/300x300/FFFACD/4A3B31?text=Kit+Esperanza', // LemonChiffon background, a bit different from gold
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'dorado' },
     addon: { type: 'cuchara', variation: 'default' },
     mug: { type: 'termo', variation: 'default' },
   },
+  {
+    id: 'preset4',
+    name: 'Kit Gozo',
+    description: 'Una explosión de alegría y sabor para iluminar tus días.',
+    price: 32.00,
+    image: 'https://placehold.co/300x300/F0E68C/4A3B31?text=Kit+Gozo', // Khaki background
+    isPreset: true,
+    coffee: { size: '250g', packagingColor: 'blanco' },
+    addon: { type: 'agenda', variation: 'estrellas' },
+    mug: { type: 'ecologica', variation: 'verde_menta' },
+  }
 ];
 
 export const COFFEE_SIZES: { value: '150g' | '250g'; label: string; price: number }[] = [
@@ -147,3 +158,6 @@ export const findOption = (config: ConfigurableItem[], value: string | undefined
 export const findVariation = (option: ConfigurableItem | undefined, variationValue: string | undefined): ItemVariation | undefined => option?.variations?.find(v => v.value === variationValue);
 export const findPackagingColor = (value: string | undefined): Omit<ItemVariation, 'price'> | undefined => PACKAGING_COLORS.find(pc => pc.value === value);
 export const findCoffeeSize = (value: string | undefined) => COFFEE_SIZES.find(cs => cs.value === value);
+
+
+    
