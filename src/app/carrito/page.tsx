@@ -61,7 +61,7 @@ export default function CarritoPage() {
 
     const fullMessage = introMessage + itemsMessage + totalMessage + outroMessage;
     const encodedMessage = encodeURIComponent(fullMessage);
-    const whatsappUrl = `https://wa.me/3153042476?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/3153042476?text=${encodedMessage}`; // Número de WhatsApp
 
     window.open(whatsappUrl, '_blank');
     
@@ -131,7 +131,9 @@ export default function CarritoPage() {
                   <span>Total Estimado:</span>
                   <span>${totalPrice.toFixed(2)}</span>
                 </div>
-                <p className="text-xs text-muted-foreground">El envío se gestionará por WhatsApp.</p>
+                <p className="text-xs text-muted-foreground">
+                  Al finalizar, te guiaremos para enviar tu pedido por WhatsApp al <strong>315 304 2476</strong>, donde coordinaremos el envío.
+                </p>
               </CardContent>
               <CardFooter className="flex flex-col space-y-3">
                 <Button onClick={handleFinalizeOrder} size="lg" className="w-full font-semibold">
