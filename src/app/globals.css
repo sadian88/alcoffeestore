@@ -9,34 +9,34 @@ body {
 
 @layer base {
   :root {
-    --background: 300 70% 98%; /* Lighter lavender-pink for general page background outside gradients */
-    --foreground: 330 60% 25%; /* Darker muted pink for main text */
+    --background: 185 57% 92%; /* Light Cyan/Aqua base - #E0F5F7 */
+    --foreground: 102 37% 20%; /* Dark Green for text - #2A4B21 */
 
-    --card: 330 100% 97%; /* Light pink for cards */
-    --card-foreground: 330 50% 30%;
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 102 37% 20%; /* Dark Green */
 
-    --popover: 330 100% 97%;
-    --popover-foreground: 330 50% 30%;
+    --popover: 0 0% 100%; /* White */
+    --popover-foreground: 102 37% 20%; /* Dark Green */
 
-    --primary: 340 85% 68%;  /* Main vibrant pink (from buttons in image) */
-    --primary-foreground: 0 0% 100%; /* White text for primary buttons */
+    --primary: 329 56% 66%;  /* Medium Pink/Magenta - #D67AA4 */
+    --primary-foreground: 0 0% 100%; /* White */
 
-    --secondary: 330 90% 92%; /* Lighter pink for secondary elements/backgrounds */
-    --secondary-foreground: 330 50% 40%;
+    --secondary: 349 83% 86%; /* Light Pink - #F8BFC9 */
+    --secondary-foreground: 329 56% 45%; /* Darker Pink for text on light pink - #B55F8C */
 
-    --muted: 300 50% 94%; /* Muted lavender-pink */
-    --muted-foreground: 300 30% 55%;
+    --muted: 185 57% 85%; /* Slightly darker cyan for muted bg - #C9EBEE */
+    --muted-foreground: 24 38% 40%; /* Darker Brown/Tan for muted text - #916141 */
 
-    --accent: 350 90% 75%;   /* Soft Pastel Pink - can be used for highlights */
-    --accent-foreground: 350 60% 20%; 
+    --accent: 24 38% 54%;   /* Brown/Tan - #B9815A */
+    --accent-foreground: 0 0% 100%; /* White */
 
-    --destructive: 0 70% 65%; 
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 70% 60%; /* Red - #DB4D4D */
+    --destructive-foreground: 0 0% 100%; /* White */
 
-    --border: 330 70% 88%; 
-    --input: 0 0% 100%;  
-    --input-border: 330 60% 80%; 
-    --ring: 340 85% 68%;   
+    --border: 185 57% 80%; /* Cyan border - #B7E5E9 */
+    --input: 0 0% 100%;  /* White */
+    --input-border: 185 57% 70%; /* Darker cyan input border - #9FD8DD */
+    --ring: 329 56% 66%;   /* Medium Pink/Magenta - #D67AA4 */
 
     --radius: 0.75rem; 
 
@@ -46,55 +46,56 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
 
-    --sidebar-background: 240 50% 95%;
-    --sidebar-foreground: 240 10% 25%;
-    --sidebar-primary: 350 90% 75%;
-    --sidebar-primary-foreground: 350 60% 20%;
-    --sidebar-accent: 350 80% 90%;
-    --sidebar-accent-foreground: 350 50% 30%;
-    --sidebar-border: 350 50% 85%;
-    --sidebar-ring: 350 90% 75%;
+    /* Sidebar Colors - Light Theme */
+    --sidebar-background: 0 0% 98%; /* Off-white - #FAFAFA */
+    --sidebar-foreground: 102 37% 20%; /* Dark Green */
+    --sidebar-primary: 329 56% 66%; /* Medium Pink */
+    --sidebar-primary-foreground: 0 0% 100%; /* White */
+    --sidebar-accent: 349 83% 90%; /* Very Light Pink - #FCE9EC */
+    --sidebar-accent-foreground: 329 56% 45%; /* Darker Pink */
+    --sidebar-border: 185 57% 88%; /* Lighter Cyan border - #D6F0F2 */
+    --sidebar-ring: 329 56% 66%; /* Medium Pink */
   }
 
   .dark {
-    /* Keeping dark mode variables, but focusing on light mode for this theme */
-    --background: 240 10% 10%;
-    --foreground: 240 10% 95%;
+    --background: 102 15% 10%; /* Very Dark Green - #141C11 */
+    --foreground: 185 50% 85%; /* Light Cyan for text - #C4E8EB */
 
-    --card: 240 10% 12%;
-    --card-foreground: 240 10% 95%;
+    --card: 102 15% 15%; /* Dark Green, slightly lighter than bg - #1D291A */
+    --card-foreground: 185 50% 85%; /* Light Cyan */
 
-    --popover: 240 10% 12%;
-    --popover-foreground: 240 10% 95%;
+    --popover: 102 15% 15%;
+    --popover-foreground: 185 50% 85%;
 
-    --primary: 340 80% 60%; /* Adjusted for dark mode */
-    --primary-foreground: 0 0% 10%;
+    --primary: 329 60% 70%; /* Slightly brighter Medium Pink - #DE8CB3 */
+    --primary-foreground: 102 30% 10%; /* Very Dark Green for text on pink */
 
-    --secondary: 330 70% 80%;
-    --secondary-foreground: 330 40% 20%;
+    --secondary: 349 60% 75%; /* Slightly brighter Light Pink - #F3AAB7 */
+    --secondary-foreground: 102 30% 10%; /* Very Dark Green for text on pink */
 
-    --muted: 240 10% 20%;
-    --muted-foreground: 240 10% 65%;
+    --muted: 102 15% 20%; /* Dark Green muted bg - #273523 */
+    --muted-foreground: 24 30% 65%; /* Lighter Brown/Tan - #C8A085 */
 
-    --accent: 350 80% 65%;
-    --accent-foreground: 350 50% 15%;
+    --accent: 24 45% 65%; /* Brighter Brown/Tan - #D39C74 */
+    --accent-foreground: 102 30% 10%; /* Very Dark Green */
 
-    --destructive: 0 60% 55%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 70% 65%; /* Red - #E55C5C */
+    --destructive-foreground: 0 0% 100%; /* White */
 
-    --border: 240 10% 25%;
-    --input: 240 10% 15%;
-    --input-border: 240 10% 30%;
-    --ring: 340 80% 60%;
+    --border: 102 15% 25%; /* Dark Green border - #30422C */
+    --input: 102 15% 18%; /* Dark Green input bg - #232E1F */
+    --input-border: 102 15% 30%; /* Slightly lighter dark green - #3A4F36 */
+    --ring: 329 60% 70%; /* Brighter Medium Pink */
     
-    --sidebar-background: 240 10% 12%;
-    --sidebar-foreground: 240 5% 90%;
-    --sidebar-primary: 350 80% 65%;
-    --sidebar-primary-foreground: 350 50% 15%;
-    --sidebar-accent: 350 70% 80%;
-    --sidebar-accent-foreground: 350 40% 20%;
-    --sidebar-border: 240 10% 25%;
-    --sidebar-ring: 350 80% 65%;
+    /* Sidebar Colors - Dark Theme */
+    --sidebar-background: 102 15% 12%; /* Darker Green than main dark bg - #182016 */
+    --sidebar-foreground: 185 50% 85%; /* Light Cyan */
+    --sidebar-primary: 329 60% 70%;
+    --sidebar-primary-foreground: 102 30% 10%;
+    --sidebar-accent: 349 50% 30%; /* Darker muted pink - #724A51 */
+    --sidebar-accent-foreground: 349 83% 86%; /* Light Pink */
+    --sidebar-border: 102 15% 20%;
+    --sidebar-ring: 329 60% 70%;
   }
 }
 
@@ -121,5 +122,3 @@ body {
     animation-delay: 6s;
   }
 }
-
-/* Removed animate-blob and blob keyframes as they are not part of the new design */
