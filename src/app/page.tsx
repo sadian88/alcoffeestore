@@ -18,7 +18,7 @@ const SmileyFace = () => (
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[hsl(var(--secondary))] via-[hsl(var(--background))] to-[hsl(var(--background))] text-foreground">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[hsl(var(--secondary)/0.8)] via-[hsl(var(--background))] to-[hsl(var(--background))] text-foreground">
       {/* Main content area */}
       <main className="flex-grow py-8 md:py-12">
         {/* Hero Section */}
@@ -27,10 +27,10 @@ export default function Home() {
             <SmileyFace />
           </div>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-primary mb-4">
-            Diseño <br className="sm:hidden"/>Encantador
+            Kits cafeteros Alcoffee.
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-lg mx-auto mb-8">
-            Una experiencia visual dulce y moderna que te enamorará.
+            Un kit pensado personalizado y lleno de amor, porque entregamos amor en cada taza.
           </p>
         </section>
 
