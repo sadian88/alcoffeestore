@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AppLayout } from '@/components/layout/app-layout'; 
 import { Toaster } from "@/components/ui/toaster"; 
+import { GoogleAnalytics } from '@/components/analytics/google-analytics';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'alCoffee - Amor en cada taza.',
@@ -26,6 +28,9 @@ export default function RootLayout({
           {children}
         </AppLayout>
         <Toaster />
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
+        </Suspense>
       </body>
     </html>
   );
