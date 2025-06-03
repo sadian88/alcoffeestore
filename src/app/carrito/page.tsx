@@ -119,7 +119,7 @@ export default function CarritoPage() {
 
       {cartItems.length === 0 ? (
         <div className="text-center py-10 flex flex-col items-center">
-           <Image src="https://placehold.co/300x250/F8BFC9/4A3B31?text=Carrito+Vacio+:(" alt="Carrito vacío" width={300} height={250} className="rounded-lg mb-6 shadow-md" data-ai-hint="empty cart" />
+           <Image src="/img/sistema/carrovacio.png?text=Carrito+Vacio+:(" alt="Carrito vacío" width={300} height={250} className="rounded-lg mb-6 shadow-md" data-ai-hint="empty cart" />
           <p className="text-xl text-muted-foreground mb-6">Tu carrito está esperando ser llenado de magia.</p>
           <div className="flex gap-4">
             <Link href="/crear-kit" passHref>

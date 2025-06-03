@@ -6,11 +6,13 @@ import type { CartItem } from '@/types';
 
 const CART_STORAGE_KEY = 'kawaCoffeeCart';
 
+// Global state for cart data and listeners
 let cartMemoryState: CartItem[] = [];
 const cartListeners: Array<(state: CartItem[]) => void> = [];
-let clientStoreInitialized = false;
+let globalStoreInitialized = false; // Renamed for clarity
 
-function loadCartFromStorage(): CartItem[] {
+// Function to load cart from storage (client-side only)
+function loadInitialCartData(): CartItem[] {
   if (typeof window === 'undefined') {
     return [];
   }
@@ -19,9 +21,15 @@ function loadCartFromStorage(): CartItem[] {
     return storedCart ? JSON.parse(storedCart) : [];
   } catch (error) {
     console.error("Failed to load cart from storage:", error);
-    localStorage.removeItem(CART_STORAGE_KEY);
+    localStorage.removeItem(CART_STORAGE_KEY); // Clear potentially corrupted data
     return [];
   }
+}
+
+// Initialize global cartMemoryState once on the client when the module loads
+if (typeof window !== 'undefined' && !globalStoreInitialized) {
+  cartMemoryState = loadInitialCartData();
+  globalStoreInitialized = true;
 }
 
 function saveCartToStorage(cart: CartItem[]) {
@@ -35,45 +43,51 @@ function saveCartToStorage(cart: CartItem[]) {
   }
 }
 
-if (typeof window !== 'undefined' && !clientStoreInitialized) {
-  cartMemoryState = loadCartFromStorage();
-  clientStoreInitialized = true;
-}
-
+// Function to update shared state and notify listeners
 function updateSharedCartState(updater: (prevState: CartItem[]) => CartItem[]) {
   cartMemoryState = updater(cartMemoryState);
   saveCartToStorage(cartMemoryState);
-  const newStateSnapshot = [...cartMemoryState];
+  const newStateSnapshot = [...cartMemoryState]; // Create a new array for listeners
   cartListeners.forEach(listener => listener(newStateSnapshot));
 }
 
 export function useCartStore() {
+  // Local state for the component instance, initialized from the current global state
   const [cartItems, setLocalCartItems] = useState<CartItem[]>(() => [...cartMemoryState]);
-  const [isCartLoaded, setIsCartLoaded] = useState(clientStoreInitialized);
+  // This state determines if THIS hook instance has completed its client-side setup
+  const [hookInstanceLoaded, setHookInstanceLoaded] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-        if (!clientStoreInitialized) {
-            cartMemoryState = loadCartFromStorage();
-            clientStoreInitialized = true;
-        }
-        setLocalCartItems([...cartMemoryState]);
-        setIsCartLoaded(true); 
-    }
-
-    const currentListener = (newState: CartItem[]) => {
-        setLocalCartItems(newState);
-    };
+    // This effect runs once per hook instance on the client-side
     
+    // Ensure global state is initialized if it somehow wasn't by the module-level code
+    // This is a safeguard, especially for environments where module execution timing might vary.
+    if (typeof window !== 'undefined' && !globalStoreInitialized) {
+      cartMemoryState = loadInitialCartData();
+      globalStoreInitialized = true;
+    }
+    
+    // Sync local component state with the potentially updated global state
+    // This ensures the component has the latest cart data when it becomes "loaded"
+    setLocalCartItems([...cartMemoryState]);
+    
+    // Mark this hook instance as loaded AFTER syncing state
+    setHookInstanceLoaded(true);
+
+    // Subscribe to changes in the global cart state
+    const currentListener = (newState: CartItem[]) => {
+      setLocalCartItems(newState);
+    };
     cartListeners.push(currentListener);
     
+    // Cleanup listener on unmount
     return () => {
       const index = cartListeners.indexOf(currentListener);
       if (index > -1) {
         cartListeners.splice(index, 1);
       }
     };
-  }, []);
+  }, []); // Empty dependency array ensures this runs once on mount for this hook instance
 
   const addToCart = useCallback((itemToAdd: Omit<CartItem, 'id' | 'quantity'>) => {
     updateSharedCartState(prevItems => {
@@ -82,7 +96,6 @@ export function useCartStore() {
         id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
         quantity: 1,
       };
-      // Simple add, no quantity check for existing items for now
       return [...prevItems, newItem];
     });
   }, []);
@@ -101,7 +114,7 @@ export function useCartStore() {
 
   return {
     cartItems,
-    isCartLoaded,
+    isCartLoaded: hookInstanceLoaded, // This ensures isCartLoaded is false on server and initial client render
     addToCart,
     removeFromCart,
     clearCart,
