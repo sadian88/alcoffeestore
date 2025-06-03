@@ -3,22 +3,33 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react'; // Added import
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CartItemDisplay } from '@/components/cart/cart-item-display';
-import { ShoppingCart, Trash2, Send, Sparkles, ArrowLeft } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox'; // Added import
+import { Input } from '@/components/ui/input'; // Added import
+import { Label } from '@/components/ui/label'; // Added import
+import { ShoppingCart, Trash2, Send, Sparkles, ArrowLeft, Gift } from 'lucide-react'; // Added Gift
 import Image from 'next/image';
-import type { CartItem, CartItemComponentDetail } from '@/types'; // Import CartItemComponentDetail
+import type { CartItem, CartItemComponentDetail } from '@/types';
 
 export default function CarritoPage() {
   const { cartItems, removeFromCart, clearCart, getCartItemCount, isCartLoaded } = useCartStore();
   const { toast } = useToast();
   const router = useRouter();
 
+  const [includeGiftCard, setIncludeGiftCard] = useState(false);
+  const [giftCardFrom, setGiftCardFrom] = useState('');
+  const [giftCardTo, setGiftCardTo] = useState('');
+
   const handleClearCart = () => {
     clearCart();
+    setIncludeGiftCard(false);
+    setGiftCardFrom('');
+    setGiftCardTo('');
     toast({
       title: "Carrito Vaciado 🛒💨",
       description: "Todos los artículos han sido eliminados de tu carrito.",
@@ -27,7 +38,7 @@ export default function CarritoPage() {
   };
 
   const totalPrice = cartItems.reduce((total, item) => total + (item.totalPrice || 0) * item.quantity, 0);
-  const itemCount = getCartItemCount(); // This should reflect number of CartItem entries, not sub-components
+  const itemCount = getCartItemCount();
 
   const formatComponentForWhatsApp = (component: CartItemComponentDetail): string => {
     return `    - ${component.name}: $${component.price.toFixed(2)}`;
@@ -57,18 +68,28 @@ export default function CarritoPage() {
     const introMessage = "¡Hola alCoffee! 👋 Quisiera realizar el siguiente pedido:\n";
     const itemsMessage = cartItems.map(item => formatItemForWhatsApp(item)).join("\n");
     const totalMessage = `\n\n--- TOTAL DEL PEDIDO ---\nTotal Estimado: $${totalPrice.toFixed(2)}`;
+    
+    let giftCardMessage = "";
+    if (includeGiftCard && (giftCardFrom.trim() || giftCardTo.trim())) {
+      giftCardMessage += "\n\n--- TARJETA DE REGALO 🎁 ---";
+      if (giftCardFrom.trim()) {
+        giftCardMessage += `\nDe: ${giftCardFrom.trim()}`;
+      }
+      if (giftCardTo.trim()) {
+        giftCardMessage += `\nPara: ${giftCardTo.trim()}`;
+      }
+    }
+    
     const outroMessage = "\n\n¡Gracias! 😊";
 
-    const fullMessage = introMessage + itemsMessage + totalMessage + outroMessage;
+    const fullMessage = introMessage + itemsMessage + totalMessage + giftCardMessage + outroMessage;
     const encodedMessage = encodeURIComponent(fullMessage);
-    const whatsappUrl = `https://wa.me/3153042476?text=${encodedMessage}`; // Número de WhatsApp
+    const whatsappUrl = `https://wa.me/3153042476?text=${encodedMessage}`; 
 
     window.open(whatsappUrl, '_blank');
     
-    // It's better to clear cart only after user confirms sending the WA message,
-    // but for now, we clear it and redirect.
-    // Consider not clearing immediately or providing an option.
-    // clearCart(); 
+    // Consider clearing cart and gift card fields after confirmation from user
+    // For now, redirecting. State will be lost on navigation.
     router.push('/pedido-enviado');
   };
 
@@ -121,6 +142,9 @@ export default function CarritoPage() {
             <Card className="sticky top-24 shadow-lg">
               <CardHeader>
                 <CardTitle className="text-2xl font-headline">Resumen del Pedido</CardTitle>
+                <p className="text-xs text-muted-foreground pt-1">
+                  Si deseas agregar algo adicional al kit escríbenos un mensaje adicional al whatsapp.
+                </p>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
@@ -130,6 +154,45 @@ export default function CarritoPage() {
                 <div className="flex justify-between text-xl font-bold text-primary">
                   <span>Total Estimado:</span>
                   <span>${totalPrice.toFixed(2)}</span>
+                </div>
+
+                {/* Gift Card Section */}
+                <div className="pt-3 border-t mt-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="giftCard" 
+                      checked={includeGiftCard} 
+                      onCheckedChange={(checked) => setIncludeGiftCard(Boolean(checked))}
+                      aria-label="Incluir tarjeta de regalo"
+                    />
+                    <Label htmlFor="giftCard" className="text-sm font-medium flex items-center">
+                      <Gift className="w-4 h-4 mr-2 text-primary" /> Incluir tarjeta de regalo
+                    </Label>
+                  </div>
+                  {includeGiftCard && (
+                    <div className="space-y-2 mt-3 animate-in fade-in-50">
+                      <div>
+                        <Label htmlFor="giftCardFrom" className="text-xs text-muted-foreground">De:</Label>
+                        <Input 
+                          id="giftCardFrom" 
+                          value={giftCardFrom} 
+                          onChange={(e) => setGiftCardFrom(e.target.value)} 
+                          placeholder="Ej: Tu Nombre" 
+                          className="h-8 text-sm"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="giftCardTo" className="text-xs text-muted-foreground">Para:</Label>
+                        <Input 
+                          id="giftCardTo" 
+                          value={giftCardTo} 
+                          onChange={(e) => setGiftCardTo(e.target.value)} 
+                          placeholder="Ej: Nombre del Destinatario" 
+                          className="h-8 text-sm"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col space-y-3">
@@ -152,3 +215,4 @@ export default function CarritoPage() {
     </div>
   );
 }
+
