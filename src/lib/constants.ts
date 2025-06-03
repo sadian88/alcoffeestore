@@ -28,7 +28,7 @@ export const MUG_OPTIONS: ConfigurableItem[] = [
     label: 'Taza Térmica',
     icon: CoffeeIcon,
     isPersonalizable: true,
-    personalizationFee: 10000, // 35000 (total personalizado) - 25000 (base)
+    personalizationFee: 10000, 
     variations: [
       { value: 'negra', label: 'Negra', image: 'https://placehold.co/120x120/333333/FFFFFF?text=T.Negra', dataAiHint: 'black mug', price: 25000 },
       { value: 'blanca', label: 'Blanca', image: 'https://placehold.co/120x120/F5F5F5/333333?text=T.Blanca', dataAiHint: 'white mug', price: 25000 },
@@ -51,8 +51,8 @@ export const MUG_OPTIONS: ConfigurableItem[] = [
     value: 'termo',
     label: 'Termo Viajero',
     icon: Rocket,
-    isPersonalizable: true, // Habilitar personalización
-    personalizationFee: 7000, // 27000 (total personalizado) - 20000 (base)
+    isPersonalizable: true,
+    personalizationFee: 7000,
     variations: [
       { value: 'default', label: 'Estándar', image: 'https://placehold.co/120x120/778899/FFFFFF?text=Termo', dataAiHint: 'travel thermos', price: 20000 }
     ],
@@ -75,9 +75,9 @@ export const ADDON_OPTIONS: ConfigurableItem[] = [
     label: 'Cuadro Decorativo',
     icon: Frame,
     requiresDescription: true,
-    descriptionFee: 3000, // Costo por descripción
+    descriptionFee: 3000, 
     variations: [
-      { value: 'default', label: 'Estándar', image: 'https://placehold.co/120x120/D2B48C/FFFFFF?text=Cuadro', dataAiHint: 'decorative frame', price: 11000 } // Base + desc. fee = 14000
+      { value: 'default', label: 'Estándar', image: 'https://placehold.co/120x120/D2B48C/FFFFFF?text=Cuadro', dataAiHint: 'decorative frame', price: 11000 } 
     ],
   },
   {
@@ -93,10 +93,10 @@ export const ADDON_OPTIONS: ConfigurableItem[] = [
 export const PRESET_KITS_DATA: PresetKit[] = [
   {
     id: 'preset1',
-    name: 'Kit Mañanero Kawaii',
+    name: 'Kit Love',
     description: 'Empieza tu día con dulzura, energía y un toque adorable.',
-    price: 25.99, // Este es el precio fijo para el kit prediseñado
-    image: 'https://placehold.co/300x300/FFC0CB/4A4A4A?text=Kit+Alegre',
+    price: 25.99, 
+    image: 'https://placehold.co/300x300/FFC0CB/4A3B31?text=Kit+Love', // Updated text for placeholder
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'rosa' },
     addon: { type: 'agenda', variation: 'floral' },
@@ -104,10 +104,10 @@ export const PRESET_KITS_DATA: PresetKit[] = [
   },
   {
     id: 'preset2',
-    name: 'Kit Relax Pastel',
+    name: 'Kit Paz',
     description: 'Un momento de calma y sabor con tu café favorito.',
-    price: 29.50, // Precio fijo
-    image: 'https://placehold.co/300x300/E6E6FA/4A4A4A?text=Kit+Relax',
+    price: 29.50, 
+    image: 'https://placehold.co/300x300/E6E6FA/4A3B31?text=Kit+Paz', // Updated text for placeholder
     isPreset: true,
     coffee: { size: '150g', packagingColor: 'blanco' },
     addon: { type: 'cuadro', variation: 'default', cuadroDescription: 'Sueña en Grande ✨' },
@@ -115,10 +115,10 @@ export const PRESET_KITS_DATA: PresetKit[] = [
   },
   {
     id: 'preset3',
-    name: 'Kit Dorado Deluxe',
+    name: 'Kit Esperanza',
     description: 'Lujo y sabor para los paladares más exigentes.',
-    price: 35.00, // Precio fijo
-    image: 'https://placehold.co/300x300/FFD700/4A4A4A?text=Kit+Deluxe',
+    price: 35.00, 
+    image: 'https://placehold.co/300x300/FFD700/4A3B31?text=Kit+Esperanza', // Updated text for placeholder
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'dorado' },
     addon: { type: 'cuchara', variation: 'default' },
@@ -131,11 +131,10 @@ export const COFFEE_SIZES: { value: '150g' | '250g'; label: string; price: numbe
   { value: '250g', label: '250 gramos', price: 26000 },
 ];
 
-// PACKAGING_COLORS do not have their own price, it's part of coffee.
 export const PACKAGING_COLORS: Omit<ItemVariation, 'price'>[] = [
-  { value: 'blanco', label: 'Blanco Nube ☁️', image: 'https://placehold.co/100x100/F5F5F5/333333?text=Blanco', dataAiHint: 'white packaging' },
-  { value: 'rosa', label: 'Rosa Pastel 🌸', image: 'https://placehold.co/100x100/FFC0CB/333333?text=Rosa', dataAiHint: 'pink packaging' },
-  { value: 'dorado', label: 'Dorado Brillante ✨', image: 'https://placehold.co/100x100/FFD700/4A4A4A?text=Dorado', dataAiHint: 'gold packaging' },
+  { value: 'blanco', label: 'Blanco Nube ☁️', image: 'https://placehold.co/100x100/F5F5F5/4A3B31?text=Blanco', dataAiHint: 'white packaging' },
+  { value: 'rosa', label: 'Rosa Pastel 🌸', image: 'https://placehold.co/100x100/FFC0CB/4A3B31?text=Rosa', dataAiHint: 'pink packaging' },
+  { value: 'dorado', label: 'Dorado Brillante ✨', image: 'https://placehold.co/100x100/FFD700/4A3B31?text=Dorado', dataAiHint: 'gold packaging' },
 ];
 
 
@@ -148,4 +147,3 @@ export const findOption = (config: ConfigurableItem[], value: string | undefined
 export const findVariation = (option: ConfigurableItem | undefined, variationValue: string | undefined): ItemVariation | undefined => option?.variations?.find(v => v.value === variationValue);
 export const findPackagingColor = (value: string | undefined): Omit<ItemVariation, 'price'> | undefined => PACKAGING_COLORS.find(pc => pc.value === value);
 export const findCoffeeSize = (value: string | undefined) => COFFEE_SIZES.find(cs => cs.value === value);
-

@@ -1,11 +1,11 @@
 
 import type { Metadata } from 'next';
 import './globals.css';
-import { AppLayout } from '@/components/layout/app-layout'; // Import AppLayout
-import { Toaster } from "@/components/ui/toaster"; // Import Toaster
+import { AppLayout } from '@/components/layout/app-layout'; 
+import { Toaster } from "@/components/ui/toaster"; 
 
 export const metadata: Metadata = {
-  title: 'alCoffee - Amor en cada taza',
+  title: 'alCoffee - Amor en cada taza.',
   description: 'Arma tu kit de café personalizado o elige uno prediseñado. Amor en cada taza.',
 };
 
@@ -30,5 +30,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-    

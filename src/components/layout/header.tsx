@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Instagram } from 'lucide-react'; // Import Instagram
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useIsClient } from '@/hooks/use-is-client';
@@ -19,7 +19,7 @@ export function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <Logo className="h-10 w-auto text-primary fill-primary/50" /> {/* Adjusted width to auto for better scaling */}
+            <Logo className="h-10 w-auto text-primary fill-primary/50" />
           </Link>
           <nav className="hidden md:flex items-center gap-1">
             <Link href="/crear-kit" passHref legacyBehavior>
@@ -36,11 +36,22 @@ export function Header() {
         </div>
         
         <div className="flex items-center">
+          <Link href="https://www.instagram.com/alcoffee_col/" target="_blank" rel="noopener noreferrer" passHref>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative text-primary hover:text-link-hover-blue hover:bg-transparent mr-2" // Added margin for spacing
+              aria-label="Síguenos en Instagram"
+            >
+              <Instagram className="w-6 h-6" />
+            </Button>
+          </Link>
           <Link href="/carrito" passHref>
             <Button 
               variant="ghost" 
               size="icon" 
               className="relative text-primary hover:text-link-hover-blue hover:bg-transparent"
+              aria-label="Ver Carrito" // Added aria-label
             >
               <ShoppingCart className="w-6 h-6" />
               {itemCount > 0 && (
@@ -48,7 +59,6 @@ export function Header() {
                   {itemCount}
                 </span>
               )}
-              <span className="sr-only">Ver Carrito</span>
             </Button>
           </Link>
            {/* Mobile Menu Trigger - can be implemented with a Sheet component if needed */}
