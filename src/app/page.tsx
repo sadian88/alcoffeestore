@@ -29,7 +29,7 @@ export default function Home() {
             <Card className="bg-card hover:shadow-xl transition-shadow duration-300 ease-in-out transform hover:-translate-y-1 cursor-pointer rounded-3xl overflow-hidden p-6 text-center">
               <CardContent className="flex flex-col items-center justify-center space-y-4">
                 <Image
-                  src="https://placehold.co/150x150/F8BFC9/4A3B31?text=Kit" /* Light Pink BG, Dark Brown Text */
+                  src="/img/sistema/armatukit.png"
                   alt="Arma tu kit de café"
                   width={120}
                   height={120}
@@ -47,7 +47,7 @@ export default function Home() {
             <Card className="bg-card hover:shadow-xl transition-shadow duration-300 ease-in-out transform hover:-translate-y-1 cursor-pointer rounded-3xl overflow-hidden p-6 text-center">
               <CardContent className="flex flex-col items-center justify-center space-y-4">
                 <Image
-                  src="https://placehold.co/150x150/FFFFFF/D67AA4?text=Kits" /* White BG, Medium Pink Text */
+                  src="/img/sistema/kitsdisponibles.png"
                   alt="Kits de café disponibles"
                   width={120}
                   height={120}
@@ -66,7 +66,7 @@ export default function Home() {
         <section className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 mb-12 md:mb-20 max-w-5xl mx-auto px-4">
           <div className="w-1/3 md:w-1/4 flex justify-center">
             <Image
-              src="https://placehold.co/200x250/FFFFFF/D67AA4?text=Unicorn" /* White BG, Medium Pink Text */
+              src="/img/sistema/taza1.png" /* White BG, Medium Pink Text */
               alt="Unicornio"
               width={180}
               height={220}
@@ -90,7 +90,7 @@ export default function Home() {
           </div>
            <div className="w-1/3 md:w-1/4 flex justify-center">
             <Image
-              src="https://placehold.co/180x220/F8BFC9/4A3B31?text=Tree" /* Light Pink BG, Dark Brown Text */
+              src="/img/sistema/taza2.png" /* Light Pink BG, Dark Brown Text */
               alt="Árbol rosa"
               width={150}
               height={190}

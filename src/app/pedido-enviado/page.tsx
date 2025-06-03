@@ -21,7 +21,7 @@ export default function PedidoEnviadoPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <Image 
-            src="https://placehold.co/300x200/E6E6FA/FFB6C1?text=%C2%A1Gracias%21+%F0%9F%8E%89"
+            src="/img/sistema/confirmado.png"
             alt="Confirmación de pedido"
             width={300}
             height={200}

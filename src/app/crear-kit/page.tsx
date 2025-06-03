@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import type { KitConfig, CoffeeSelection, AddonSelection, MugSelection, CartItem, CartItemComponentDetail } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -71,7 +71,6 @@ export function calculateMugPrice(mug: MugSelection): number {
     if (mugVariationInfo) {
       price += mugVariationInfo.price;
     }
-    // Aplica la tarifa de personalización si la taza es personalizable y está marcada
     if (mugTypeInfo.isPersonalizable && mug.termicaMarked && mugTypeInfo.personalizationFee) {
       price += mugTypeInfo.personalizationFee;
     }
@@ -82,6 +81,8 @@ export function calculateMugPrice(mug: MugSelection): number {
 
 export default function CrearKitPage() {
   const [currentStep, setCurrentStep] = useState(1);
+  const nextButtonRef = useRef<HTMLButtonElement>(null);
+  const addKitButtonRef = useRef<HTMLButtonElement>(null);
   const [kitConfig, setKitConfig] = useState<KitConfig>({
     ...initialKitConfig
   });
@@ -102,8 +103,14 @@ export default function CrearKitPage() {
     setKitConfig(prev => ({ ...prev, price: newPrice }));
   }, [kitConfig.coffee, kitConfig.addon, kitConfig.mug, calculateKitPriceTotal]);
 
+ useEffect(() => {
+    if (currentStep < TOTAL_STEPS && nextButtonRef.current) {
+      nextButtonRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (currentStep === TOTAL_STEPS && addKitButtonRef.current) {
+      addKitButtonRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [kitConfig.coffee, kitConfig.addon, kitConfig.mug, currentStep]);
 
-  // useEffect que establecía valores por defecto ha sido eliminado para que el kit comience vacío.
 
   const updateCoffee = (coffee: Partial<CoffeeSelection>) => setKitConfig(prev => ({ ...prev, coffee: { ...prev.coffee, ...coffee } }));
   
@@ -148,8 +155,8 @@ export default function CrearKitPage() {
 
   const resetKit = () => {
     setKitConfig({
-      ...initialKitConfig, // Restablece al estado inicial vacío.
-      price: 0 // El precio de un kit vacío es 0.
+      ...initialKitConfig, 
+      price: 0 
     });
     setCurrentStep(1);
   }
@@ -179,7 +186,6 @@ export default function CrearKitPage() {
         const mugConfig = findOption(MUG_OPTIONS, kitConfig.mug.type);
         if (mugConfig?.variations && mugConfig.variations.length > 0 && !kitConfig.mug.variation) return false;
         if (mugConfig?.isPersonalizable && typeof kitConfig.mug.termicaMarked === 'undefined') return false;
-        // Si termicaMarked es true, termicaPhrase puede o no estar vacía.
         return true;
       }
       default: return false;
@@ -262,7 +268,7 @@ export default function CrearKitPage() {
       displayName: kitName,
       totalPrice: totalPrice,
       components: [coffeeComponent, addonComponent, mugComponent],
-      displayImage: mugComponent.image, // Default to mug image for kit
+      displayImage: mugComponent.image, 
     };
 
     addToCart(cartItem);
@@ -334,12 +340,14 @@ export default function CrearKitPage() {
               <ArrowLeft className="mr-2 h-5 w-5" /> Anterior
             </Button>
             {currentStep < TOTAL_STEPS ? (
-              <Button onClick={nextStep} disabled={!isStepValid(currentStep)} className="text-lg px-6 py-3">
+              <Button ref={nextButtonRef} onClick={nextStep} disabled={!isStepValid(currentStep)} className="text-lg px-6 py-3">
                 Siguiente <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             ) : (
               <Button
+                ref={addKitButtonRef}
                 onClick={() => handleAddFullKitToCart(true)}
+
                 disabled={!isEntireKitValid()}
                 className="text-lg px-6 py-3 bg-accent hover:bg-accent/90 text-accent-foreground"
               >
