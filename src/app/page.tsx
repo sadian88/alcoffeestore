@@ -5,16 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { Heart } from 'lucide-react'; // For the footer
 
-// Smiley face SVG component updated to use CSS variables
-const SmileyFace = () => (
-  <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-80">
-    <circle cx="30" cy="30" r="28" fill="hsl(var(--secondary))" stroke="hsl(var(--primary))" strokeWidth="3"/>
-    <circle cx="20" cy="25" r="3" fill="hsl(var(--foreground))"/>
-    <circle cx="40" cy="25" r="3" fill="hsl(var(--foreground))"/>
-    <path d="M20 38 Q30 45 40 38" stroke="hsl(var(--foreground))" strokeWidth="3" fill="none" strokeLinecap="round"/>
-  </svg>
-);
-
+// SmileyFace component removed as requested
 
 export default function Home() {
   return (
@@ -23,14 +14,12 @@ export default function Home() {
       <main className="flex-grow py-8 md:py-12">
         {/* Hero Section */}
         <section className="text-center pt-8 pb-12 md:pt-12 md:pb-16 relative">
-          <div className="absolute top-1/2 left-1/4 transform -translate-x-1/2 -translate-y-1/2 opacity-50 scale-75 md:scale-100">
-            <SmileyFace />
-          </div>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-primary mb-4">
+          {/* SmileyFace instance removed */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-primary mb-4">
             Kits cafeteros Alcoffee.
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-lg mx-auto mb-8">
-            Un kit pensado personalizado y lleno de amor, porque entregamos amor en cada taza.
+            Un kit personalizado y lleno de amor.
           </p>
         </section>
 
@@ -123,4 +112,3 @@ export default function Home() {
     </div>
   );
 }
-
