@@ -10,13 +10,13 @@ body {
 @layer base {
   :root {
     --background: 185 57% 92%; /* Light Cyan/Aqua base - #E0F5F7 */
-    --foreground: 102 37% 20%; /* Dark Green for text - #2A4B21 */
+    --foreground: 25 20% 24%; /* Dark Brown for text - #4A3B31 */
 
     --card: 0 0% 100%; /* White */
-    --card-foreground: 102 37% 20%; /* Dark Green */
+    --card-foreground: 25 20% 24%; /* Dark Brown */
 
     --popover: 0 0% 100%; /* White */
-    --popover-foreground: 102 37% 20%; /* Dark Green */
+    --popover-foreground: 25 20% 24%; /* Dark Brown */
 
     --primary: 329 56% 66%;  /* Medium Pink/Magenta - #D67AA4 */
     --primary-foreground: 0 0% 100%; /* White */
@@ -48,7 +48,7 @@ body {
 
     /* Sidebar Colors - Light Theme */
     --sidebar-background: 0 0% 98%; /* Off-white - #FAFAFA */
-    --sidebar-foreground: 102 37% 20%; /* Dark Green */
+    --sidebar-foreground: 25 20% 24%; /* Dark Brown */
     --sidebar-primary: 329 56% 66%; /* Medium Pink */
     --sidebar-primary-foreground: 0 0% 100%; /* White */
     --sidebar-accent: 349 83% 90%; /* Very Light Pink - #FCE9EC */
@@ -61,43 +61,43 @@ body {
   }
 
   .dark {
-    --background: 102 15% 10%; /* Very Dark Green - #141C11 */
-    --foreground: 185 50% 85%; /* Light Cyan for text - #C4E8EB */
+    --background: 25 15% 10%; /* Very Dark Brown/Almost Black - #201C1A */
+    --foreground: 30 20% 75%; /* Light Tan/Warm Gray for text - #C9BDB3 */
 
-    --card: 102 15% 15%; /* Dark Green, slightly lighter than bg - #1D291A */
-    --card-foreground: 185 50% 85%; /* Light Cyan */
+    --card: 25 15% 15%; /* Dark Brown, slightly lighter than bg - #2D2724 */
+    --card-foreground: 30 20% 75%; /* Light Tan/Warm Gray */
 
-    --popover: 102 15% 15%;
-    --popover-foreground: 185 50% 85%;
+    --popover: 25 15% 15%;
+    --popover-foreground: 30 20% 75%;
 
     --primary: 329 60% 70%; /* Slightly brighter Medium Pink - #DE8CB3 */
-    --primary-foreground: 102 30% 10%; /* Very Dark Green for text on pink */
+    --primary-foreground: 25 20% 15%; /* Very Dark Brown for text on pink - #2D2724 */
 
     --secondary: 349 60% 75%; /* Slightly brighter Light Pink - #F3AAB7 */
-    --secondary-foreground: 102 30% 10%; /* Very Dark Green for text on pink */
+    --secondary-foreground: 25 20% 15%; /* Very Dark Brown for text on pink - #2D2724 */
 
-    --muted: 102 15% 20%; /* Dark Green muted bg - #273523 */
+    --muted: 25 15% 20%; /* Dark Brown muted bg - #3B332E */
     --muted-foreground: 24 30% 65%; /* Lighter Brown/Tan - #C8A085 */
 
     --accent: 24 45% 65%; /* Brighter Brown/Tan - #D39C74 */
-    --accent-foreground: 102 30% 10%; /* Very Dark Green */
+    --accent-foreground: 25 20% 15%; /* Very Dark Brown */
 
     --destructive: 0 70% 65%; /* Red - #E55C5C */
     --destructive-foreground: 0 0% 100%; /* White */
 
-    --border: 102 15% 25%; /* Dark Green border - #30422C */
-    --input: 102 15% 18%; /* Dark Green input bg - #232E1F */
-    --input-border: 102 15% 30%; /* Slightly lighter dark green - #3A4F36 */
+    --border: 25 15% 25%; /* Dark Brown border - #4A3B31 */
+    --input: 25 15% 18%; /* Dark Brown input bg - #342D28 */
+    --input-border: 25 15% 30%; /* Slightly lighter dark brown - #564940 */
     --ring: 329 60% 70%; /* Brighter Medium Pink */
     
     /* Sidebar Colors - Dark Theme */
-    --sidebar-background: 102 15% 12%; /* Darker Green than main dark bg - #182016 */
-    --sidebar-foreground: 185 50% 85%; /* Light Cyan */
+    --sidebar-background: 25 15% 12%; /* Darker Brown than main dark bg - #25201D */
+    --sidebar-foreground: 30 20% 75%; /* Light Tan/Warm Gray */
     --sidebar-primary: 329 60% 70%;
-    --sidebar-primary-foreground: 102 30% 10%;
+    --sidebar-primary-foreground: 25 20% 15%;
     --sidebar-accent: 349 50% 30%; /* Darker muted pink - #724A51 */
     --sidebar-accent-foreground: 349 83% 86%; /* Light Pink */
-    --sidebar-border: 102 15% 20%;
+    --sidebar-border: 25 15% 20%;
     --sidebar-ring: 329 60% 70%;
 
     /* Custom link hover color for dark mode */
@@ -128,3 +128,4 @@ body {
     animation-delay: 6s;
   }
 }
+

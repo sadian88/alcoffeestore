@@ -40,7 +40,7 @@ export default function Home() {
             <Card className="bg-card hover:shadow-xl transition-shadow duration-300 ease-in-out transform hover:-translate-y-1 cursor-pointer rounded-3xl overflow-hidden p-6 text-center">
               <CardContent className="flex flex-col items-center justify-center space-y-4">
                 <Image
-                  src="https://placehold.co/150x150/F8BFC9/3A5E2B?text=Kit" /* Light Pink BG, Dark Green Text */
+                  src="https://placehold.co/150x150/F8BFC9/4A3B31?text=Kit" /* Light Pink BG, Dark Brown Text */
                   alt="Arma tu kit de café"
                   width={120}
                   height={120}
@@ -101,7 +101,7 @@ export default function Home() {
           </div>
            <div className="w-1/3 md:w-1/4 flex justify-center">
             <Image
-              src="https://placehold.co/180x220/F8BFC9/3A5E2B?text=Tree" /* Light Pink BG, Dark Green Text */
+              src="https://placehold.co/180x220/F8BFC9/4A3B31?text=Tree" /* Light Pink BG, Dark Brown Text */
               alt="Árbol rosa"
               width={150}
               height={190}
@@ -123,3 +123,4 @@ export default function Home() {
     </div>
   );
 }
+
