@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Instagram } from 'lucide-react'; // Import Instagram
+import { ShoppingCart, Instagram, Facebook, MessageSquare } from 'lucide-react'; // Import Facebook and MessageSquare
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useIsClient } from '@/hooks/use-is-client';
@@ -40,10 +40,30 @@ export function Header() {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="relative text-primary hover:text-link-hover-blue hover:bg-transparent mr-2" // Added margin for spacing
+              className="relative text-primary hover:text-link-hover-blue hover:bg-transparent mr-2"
               aria-label="Síguenos en Instagram"
             >
               <Instagram className="w-6 h-6" />
+            </Button>
+          </Link>
+          <Link href="https://www.facebook.com/share/1J6rxxbSq8/" target="_blank" rel="noopener noreferrer" passHref>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative text-primary hover:text-link-hover-blue hover:bg-transparent mr-2"
+              aria-label="Síguenos en Facebook"
+            >
+              <Facebook className="w-6 h-6" />
+            </Button>
+          </Link>
+          <Link href="https://wa.me/3153042476" target="_blank" rel="noopener noreferrer" passHref>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative text-primary hover:text-link-hover-blue hover:bg-transparent mr-2"
+              aria-label="Contáctanos por WhatsApp"
+            >
+              <MessageSquare className="w-6 h-6" />
             </Button>
           </Link>
           <Link href="/carrito" passHref>
@@ -51,7 +71,7 @@ export function Header() {
               variant="ghost" 
               size="icon" 
               className="relative text-primary hover:text-link-hover-blue hover:bg-transparent"
-              aria-label="Ver Carrito" // Added aria-label
+              aria-label="Ver Carrito"
             >
               <ShoppingCart className="w-6 h-6" />
               {itemCount > 0 && (
