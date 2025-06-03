@@ -16,6 +16,8 @@ import { ShoppingCart, Trash2, Send, Sparkles, ArrowLeft, Gift } from 'lucide-re
 import Image from 'next/image';
 import type { CartItem, CartItemComponentDetail } from '@/types';
 import { formatPrice } from '@/lib/utils';
+import { getAnalyticsInstance } from '@/lib/firebase';
+import { logEvent } from 'firebase/analytics';
 
 export default function CarritoPage() {
   const { cartItems, removeFromCart, clearCart, getCartItemCount, isCartLoaded } = useCartStore();
@@ -56,7 +58,7 @@ export default function CarritoPage() {
     return message;
   };
 
-  const handleFinalizeOrder = () => {
+  const handleFinalizeOrder = async () => {
     if (cartItems.length === 0) {
       toast({
         title: "Carrito Vacío",
@@ -86,6 +88,25 @@ export default function CarritoPage() {
     const fullMessage = introMessage + itemsMessage + totalMessage + giftCardMessage + outroMessage;
     const encodedMessage = encodeURIComponent(fullMessage);
     const whatsappUrl = `https://wa.me/3153042476?text=${encodedMessage}`; 
+
+    try {
+        const analytics = await getAnalyticsInstance();
+        if (analytics) {
+            logEvent(analytics, 'begin_checkout', {
+                currency: 'COP',
+                value: totalPrice,
+                items: cartItems.map(item => ({
+                    item_id: item.id,
+                    item_name: item.displayName,
+                    item_category: item.cartItemType === 'kit' ? (item.isPresetKit ? 'preset_kit' : 'custom_kit') : 'individual_product',
+                    price: item.totalPrice / (item.quantity || 1), // Price per unit
+                    quantity: item.quantity || 1
+                }))
+            });
+        }
+    } catch (error) {
+        console.error("Error logging GA event for begin checkout:", error);
+    }
 
     window.open(whatsappUrl, '_blank');
     

@@ -11,6 +11,8 @@ import { ShoppingCart, Package, Puzzle, Coffee as CoffeeIcon, Paperclip } from '
 import { findCoffeeSize, findPackagingColor, findOption, findVariation, ADDON_OPTIONS, MUG_OPTIONS } from '@/lib/constants';
 import { calculateCoffeePrice, calculateAddonPrice, calculateMugPrice } from '@/app/crear-kit/page'; 
 import { formatPrice } from '@/lib/utils';
+import { getAnalyticsInstance } from '@/lib/firebase';
+import { logEvent } from 'firebase/analytics';
 
 
 interface PresetKitCardProps {
@@ -74,7 +76,7 @@ export function PresetKitCard({ kit }: PresetKitCardProps) {
     };
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     const coffeeComp = getCoffeeComponentDetail(kit.coffee);
     const addonComp = getAddonComponentDetail(kit.addon); // Main addon (agenda/cuadro)
     const cucharaComp = getAddonComponentDetail(kit.cuchara); // Spoon component
@@ -96,6 +98,25 @@ export function PresetKitCard({ kit }: PresetKitCardProps) {
       description: `${kit.name} ha sido añadido a tu carrito.`,
       className: "bg-primary border-primary text-primary-foreground",
     });
+
+    try {
+      const analytics = await getAnalyticsInstance();
+      if (analytics) {
+        logEvent(analytics, 'add_to_cart', {
+          currency: 'COP',
+          value: kit.price,
+          items: [{
+            item_id: kit.id,
+            item_name: kit.name,
+            item_category: 'preset_kit',
+            price: kit.price,
+            quantity: 1
+          }]
+        });
+      }
+    } catch (error) {
+      console.error("Error logging GA event for add preset kit to cart:", error);
+    }
   };
 
   const coffeeDetails = getCoffeeComponentDetail(kit.coffee);
@@ -125,10 +146,10 @@ export function PresetKitCard({ kit }: PresetKitCardProps) {
           ${formatPrice(kit.price)}
         </div>
         <ul className="list-none space-y-1 text-muted-foreground">
-          <li className="flex items-center gap-2"><Package className="w-4 h-4 text-secondary-foreground" /> {coffeeDetails.name}</li>
-          <li className="flex items-center gap-2"><Paperclip className="w-4 h-4 text-secondary-foreground" /> {cucharaDetails.name}</li>
-          <li className="flex items-center gap-2"><Puzzle className="w-4 h-4 text-secondary-foreground" /> {addonDetails.name}</li>
-          <li className="flex items-center gap-2"><CoffeeIcon className="w-4 h-4 text-secondary-foreground" /> {mugDetails.name}</li>
+          <li className="flex items-center gap-2"><Package className="w-4 h-4 text-secondary-foreground" /> {coffeeDetails.name} (${formatPrice(coffeeDetails.price)})</li>
+          <li className="flex items-center gap-2"><Paperclip className="w-4 h-4 text-secondary-foreground" /> {cucharaDetails.name} (${formatPrice(cucharaDetails.price)})</li>
+          <li className="flex items-center gap-2"><Puzzle className="w-4 h-4 text-secondary-foreground" /> {addonDetails.name} (${formatPrice(addonDetails.price)})</li>
+          <li className="flex items-center gap-2"><CoffeeIcon className="w-4 h-4 text-secondary-foreground" /> {mugDetails.name} (${formatPrice(mugDetails.price)})</li>
         </ul>
       </CardContent>
       <CardFooter>

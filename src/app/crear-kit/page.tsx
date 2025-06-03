@@ -25,6 +25,8 @@ import {
   type ItemVariation,
   type ConfigurableItem
 } from '@/lib/constants';
+import { getAnalyticsInstance } from '@/lib/firebase';
+import { logEvent } from 'firebase/analytics';
 
 const initialCoffeeState: CoffeeSelection = { size: '', packagingColor: '' };
 const initialAddonState: AddonSelection = { type: '', variation: '', cuadroDescription: '' };
@@ -164,9 +166,20 @@ export default function CrearKitPage() {
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
-  const navigateToStep = (step: number) => {
+  const navigateToStep = async (step: number) => {
     if (step >= 1 && step <= TOTAL_STEPS) {
       setCurrentStep(step);
+      try {
+        const analytics = await getAnalyticsInstance();
+        if (analytics) {
+          logEvent(analytics, 'kit_builder_step_view', {
+            step_number: step,
+            step_name: STEP_NAMES[step - 1] || `Paso ${step}`,
+          });
+        }
+      } catch (error) {
+        console.error("Error logging GA event for step navigation:", error);
+      }
     }
   };
   
@@ -247,7 +260,7 @@ export default function CrearKitPage() {
     };
   };
   
-  const handleAddFullKitToCart = (navigateToCart: boolean = false) => {
+  const handleAddFullKitToCart = async (navigateToCart: boolean = false) => {
     if (!isEntireKitValid()) {
       toast({ title: "Kit Incompleto", description: "Por favor, completa todos los pasos de tu kit.", variant: "destructive" });
       if (!isStepValid(1)) navigateToStep(1);
@@ -273,13 +286,33 @@ export default function CrearKitPage() {
 
     addToCart(cartItem);
     toast({ title: "¡Kit Agregado! 💖", description: `${kitName} ha sido añadido a tu carrito.`, className: "bg-primary border-primary text-primary-foreground"});
+    
+    try {
+      const analytics = await getAnalyticsInstance();
+      if (analytics) {
+        logEvent(analytics, 'add_to_cart', {
+          currency: 'COP',
+          value: totalPrice,
+          items: [{
+            item_id: kitName, 
+            item_name: kitName,
+            item_category: 'custom_kit',
+            price: totalPrice,
+            quantity: 1,
+          }]
+        });
+      }
+    } catch (error) {
+      console.error("Error logging GA event for add full kit to cart:", error);
+    }
+
     resetKit();
     if (navigateToCart) {
       router.push('/carrito');
     }
   };
 
-  const handleAddIndividualComponentToCart = (componentType: 'coffee' | 'addon' | 'mug') => {
+  const handleAddIndividualComponentToCart = async (componentType: 'coffee' | 'addon' | 'mug') => {
     let componentDetail: CartItemComponentDetail | undefined = undefined; 
     let displayName: string = ''; 
     let isValid = false;
@@ -311,6 +344,24 @@ export default function CrearKitPage() {
       };
       addToCart(cartItem);
       toast({ title: "¡Producto Agregado! ✨", description: `${displayName} ha sido añadido a tu carrito.` });
+
+      try {
+        const analytics = await getAnalyticsInstance();
+        if (analytics) {
+          logEvent(analytics, 'add_to_cart', {
+            currency: 'COP',
+            value: componentDetail.price,
+            items: [{
+              item_name: displayName,
+              item_category: componentType,
+              price: componentDetail.price,
+              quantity: 1
+            }]
+          });
+        }
+      } catch (error) {
+        console.error("Error logging GA event for add individual component to cart:", error);
+      }
     }
   };
 

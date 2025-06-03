@@ -1,6 +1,8 @@
+
 import { PresetKitCard } from '@/components/kits/preset-kit-card';
 import { PRESET_KITS_DATA } from '@/lib/constants';
 import { Gift } from 'lucide-react';
+import Link from 'next/link';
 
 export default function KitsPredisenadosPage() {
   return (
@@ -14,6 +16,13 @@ export default function KitsPredisenadosPage() {
         </h1>
         <p className="text-lg text-muted-foreground max-w-xl mx-auto">
           Selecciones hechas con amor, listas para alegrar tu día o el de alguien especial.
+        </p>
+        <p className="text-xs text-muted-foreground max-w-xl mx-auto">
+          Para ver más fotos de nuestros kits y creaciones, ¡visita nuestro{' '}
+          <Link href="https://www.instagram.com/alcoffee_col/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">
+            Instagram
+          </Link>
+          !
         </p>
       </header>
 
