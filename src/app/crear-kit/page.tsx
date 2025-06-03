@@ -83,10 +83,7 @@ export function calculateMugPrice(mug: MugSelection): number {
 export default function CrearKitPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [kitConfig, setKitConfig] = useState<KitConfig>({
-    ...initialKitConfig,
-    coffee: { ...initialCoffeeState },
-    addon: { ...initialAddonState },
-    mug: { ...initialMugState }
+    ...initialKitConfig
   });
 
   const router = useRouter();
@@ -106,39 +103,7 @@ export default function CrearKitPage() {
   }, [kitConfig.coffee, kitConfig.addon, kitConfig.mug, calculateKitPriceTotal]);
 
 
-  useEffect(() => {
-    let updated = false;
-    const newConfig = { ...kitConfig };
-
-    if (!newConfig.coffee.size && COFFEE_SIZES.length > 0) {
-      newConfig.coffee.size = COFFEE_SIZES[0].value;
-      updated = true;
-    }
-    if (!newConfig.coffee.packagingColor && PACKAGING_COLORS.length > 0) {
-      newConfig.coffee.packagingColor = PACKAGING_COLORS[0].value;
-      updated = true;
-    }
-
-    if (!newConfig.addon.type && ADDON_OPTIONS.length > 0) {
-      const defaultAddonType = ADDON_OPTIONS[0];
-      newConfig.addon.type = defaultAddonType.value;
-      newConfig.addon.variation = defaultAddonType.variations?.[0]?.value || '';
-      updated = true;
-    }
-
-    if (!newConfig.mug.type && MUG_OPTIONS.length > 0) {
-      const defaultMugType = findOption(MUG_OPTIONS, MUG_OPTIONS[0].value);
-      newConfig.mug.type = defaultMugType?.value || '';
-      newConfig.mug.variation = defaultMugType?.variations?.[0]?.value || '';
-      newConfig.mug.termicaMarked = defaultMugType?.isPersonalizable ? false : undefined;
-      newConfig.mug.termicaPhrase = defaultMugType?.isPersonalizable ? '' : undefined;
-      updated = true;
-    }
-    if (updated) {
-      setKitConfig(newConfig);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect que establecía valores por defecto ha sido eliminado para que el kit comience vacío.
 
   const updateCoffee = (coffee: Partial<CoffeeSelection>) => setKitConfig(prev => ({ ...prev, coffee: { ...prev.coffee, ...coffee } }));
   
@@ -182,31 +147,10 @@ export default function CrearKitPage() {
   };
 
   const resetKit = () => {
-    const newCoffeeState = { size: COFFEE_SIZES[0]?.value || '', packagingColor: PACKAGING_COLORS[0]?.value || '' };
-    
-    const defaultAddonType = ADDON_OPTIONS[0];
-    const newAddonState = { 
-      type: defaultAddonType?.value || '', 
-      variation: defaultAddonType?.variations?.[0]?.value || '', 
-      cuadroDescription: '' 
-    };
-    
-    const defaultMugTypeConfig = findOption(MUG_OPTIONS, MUG_OPTIONS[0]?.value || '');
-    const newMugState = { 
-      type: defaultMugTypeConfig?.value || '', 
-      variation: defaultMugTypeConfig?.variations?.[0]?.value || '',
-      termicaMarked: defaultMugTypeConfig?.isPersonalizable ? false : undefined,
-      termicaPhrase: defaultMugTypeConfig?.isPersonalizable ? '' : undefined
-    };
-
-    const newKit = {
-      ...initialKitConfig,
-      coffee: newCoffeeState,
-      addon: newAddonState,
-      mug: newMugState
-    };
-    newKit.price = calculateKitPriceTotal(newKit);
-    setKitConfig(newKit);
+    setKitConfig({
+      ...initialKitConfig, // Restablece al estado inicial vacío.
+      price: 0 // El precio de un kit vacío es 0.
+    });
     setCurrentStep(1);
   }
 
@@ -330,8 +274,8 @@ export default function CrearKitPage() {
   };
 
   const handleAddIndividualComponentToCart = (componentType: 'coffee' | 'addon' | 'mug') => {
-    let componentDetail: CartItemComponentDetail | undefined = undefined; // Initialize as undefined
-    let displayName: string = ''; // Initialize as empty
+    let componentDetail: CartItemComponentDetail | undefined = undefined; 
+    let displayName: string = ''; 
     let isValid = false;
 
     if (componentType === 'coffee' && isStepValid(1)) {
@@ -351,12 +295,12 @@ export default function CrearKitPage() {
       return;
     }
 
-    if (isValid && componentDetail) { // Check if componentDetail is defined
+    if (isValid && componentDetail) { 
       const cartItem: Omit<CartItem, 'id' | 'quantity'> = {
         cartItemType: 'individual_product',
         displayName: displayName,
         totalPrice: componentDetail.price,
-        components: [componentDetail], // componentDetail is now guaranteed to be defined
+        components: [componentDetail], 
         displayImage: componentDetail.image,
       };
       addToCart(cartItem);
