@@ -87,8 +87,10 @@ export function StepMug({ mug, onChange }: StepMugProps) {
                   )}
                 >
                   <RadioGroupItem value={variation.value} id={`mug-variation-${variation.value}`} className="sr-only" />
-                  <Image src={variation.image} alt={variation.label} width={80} height={80} className="rounded-md object-cover" data-ai-hint={variation.dataAiHint} />
-                  <span className="text-xs text-center">{variation.label} (${variation.price.toFixed(2)})</span>
+                  <Image src={variation.image} alt={variation.label} width={80} height={80} className="rounded-md object-contain" data-ai-hint={variation.dataAiHint} />
+                  <span className="text-xs text-center h-8 flex items-center justify-center">
+                    {variation.label} (${variation.price.toFixed(2)})
+                  </span>
                 </Label>
               ))}
             </RadioGroup>
@@ -144,4 +146,3 @@ export function StepMug({ mug, onChange }: StepMugProps) {
     </Card>
   );
 }
-
