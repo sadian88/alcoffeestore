@@ -40,10 +40,10 @@ export const MUG_OPTIONS: ConfigurableItem[] = [
     label: 'Taza Ecológica',
     icon: Leaf,
     variations: [
-      { value: 'natural', label: 'Natural', image: 'https://placehold.co/120x120/DEB887/333333?text=Eco+Natural', dataAiHint: 'bamboo cup', price: 20000 },
-      { value: 'rosa_pastel', label: 'Rosa Pastel', image: 'https://placehold.co/120x120/FFD1DC/333333?text=Eco+Rosa', dataAiHint: 'pastel_pink cup', price: 20000 },
-      { value: 'azul_cielo', label: 'Azul Cielo', image: 'https://placehold.co/120x120/ADD8E6/333333?text=Eco+Azul', dataAiHint: 'sky_blue cup', price: 20000 },
-      { value: 'verde_menta', label: 'Verde Menta', image: 'https://placehold.co/120x120/98FB98/333333?text=Eco+Verde', dataAiHint: 'mint_green cup', price: 20000 },
+      { value: 'natural', label: 'Natural', image: 'https://placehold.co/120x120.png', dataAiHint: 'bamboo cup', price: 20000 },
+      { value: 'rosa_pastel', label: 'Rosa Pastel', image: 'https://placehold.co/120x120.png', dataAiHint: 'pastel pink cup', price: 20000 },
+      { value: 'azul_cielo', label: 'Azul Cielo', image: 'https://placehold.co/120x120.png', dataAiHint: 'sky blue cup', price: 20000 },
+      { value: 'verde_menta', label: 'Verde Menta', image: 'https://placehold.co/120x120.png', dataAiHint: 'mint green cup', price: 20000 },
     ],
   },
   {
@@ -85,8 +85,8 @@ export const ADDON_OPTIONS: ConfigurableItem[] = [
     label: 'Cuchara Clip',
     icon: Paperclip,
     variations: [
-      { value: 'cdorada', label: 'Dorada', image: '/img/productos/miniagendarosa.png', dataAiHint: 'cuchara dorada', price: 17000 },
-      { value: 'cplata', label: 'Plata', image: '/img/productos/miniagendarosa.png', dataAiHint: 'cuchara plata', price: 17000 }
+      { value: 'cdorada', label: 'Dorada', image: 'https://placehold.co/120x120.png', dataAiHint: 'gold spoon', price: 17000 },
+      { value: 'cplata', label: 'Plata', image: 'https://placehold.co/120x120.png', dataAiHint: 'silver spoon', price: 17000 }
     ],
   },
 ];
@@ -136,9 +136,9 @@ export const COFFEE_SIZES: { value: '150g' | '250g'; label: string; price: numbe
 ];
 
 export const PACKAGING_COLORS: Omit<ItemVariation, 'price'>[] = [
-  { value: 'blanco', label: 'Blanco Nube ☁️', image: 'https://placehold.co/100x100/F5F5F5/4A3B31?text=Blanco', dataAiHint: 'white packaging' },
-  { value: 'rosa', label: 'Rosa Pastel 🌸', image: 'https://placehold.co/100x100/FFC0CB/4A3B31?text=Rosa', dataAiHint: 'pink packaging' },
-  { value: 'dorado', label: 'Dorado Brillante ✨', image: 'https://placehold.co/100x100/FFD700/4A3B31?text=Dorado', dataAiHint: 'gold packaging' },
+  { value: 'blanco', label: 'Blanco Nube ☁️', image: 'https://placehold.co/100x100.png', dataAiHint: 'white packaging' },
+  { value: 'rosa', label: 'Rosa Pastel 🌸', image: 'https://placehold.co/100x100.png', dataAiHint: 'pink packaging' },
+  { value: 'dorado', label: 'Dorado Brillante ✨', image: 'https://placehold.co/100x100.png', dataAiHint: 'gold packaging' },
 ];
 
 
@@ -154,3 +154,4 @@ export const findCoffeeSize = (value: string | undefined) => COFFEE_SIZES.find(c
 
 
     
+

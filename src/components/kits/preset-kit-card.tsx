@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useToast } from '@/hooks/use-toast';
-import { ShoppingCart, Package, Puzzle, Coffee as CoffeeIcon } from 'lucide-react';
+import { ShoppingCart, Package, Puzzle, Coffee as CoffeeIcon, Paperclip } from 'lucide-react';
 import { findCoffeeSize, findPackagingColor, findOption, findVariation, ADDON_OPTIONS, MUG_OPTIONS } from '@/lib/constants';
 import { calculateCoffeePrice, calculateAddonPrice, calculateMugPrice } from '@/app/crear-kit/page'; // Import pricing functions
 
@@ -75,14 +75,15 @@ export function PresetKitCard({ kit }: PresetKitCardProps) {
 
   const handleAddToCart = () => {
     const coffeeComp = getCoffeeComponentDetail(kit.coffee);
-    const addonComp = getAddonComponentDetail(kit.addon);
+    const addonComp = getAddonComponentDetail(kit.addon); // Main addon (agenda/cuadro)
+    const cucharaComp = getAddonComponentDetail(kit.cuchara); // Spoon component
     const mugComp = getMugComponentDetail(kit.mug);
 
     const cartItemToAdd: Omit<CartItem, 'id' | 'quantity'> = {
       cartItemType: 'kit',
       displayName: kit.name,
       totalPrice: kit.price, // Preset kits have a fixed total price
-      components: [coffeeComp, addonComp, mugComp],
+      components: [coffeeComp, cucharaComp, addonComp, mugComp], // Added cucharaComp
       isPresetKit: true,
       presetKitId: kit.id,
       displayImage: kit.image,
@@ -98,7 +99,8 @@ export function PresetKitCard({ kit }: PresetKitCardProps) {
 
   // Get component details for display on card
   const coffeeDetails = getCoffeeComponentDetail(kit.coffee);
-  const addonDetails = getAddonComponentDetail(kit.addon);
+  const addonDetails = getAddonComponentDetail(kit.addon); // This is for agenda/cuadro
+  const cucharaDetails = getAddonComponentDetail(kit.cuchara); // For spoon
   const mugDetails = getMugComponentDetail(kit.mug);
 
 
@@ -124,6 +126,7 @@ export function PresetKitCard({ kit }: PresetKitCardProps) {
         </div>
         <ul className="list-none space-y-1 text-muted-foreground">
           <li className="flex items-center gap-2"><Package className="w-4 h-4 text-secondary-foreground" /> {coffeeDetails.name}</li>
+          <li className="flex items-center gap-2"><Paperclip className="w-4 h-4 text-secondary-foreground" /> {cucharaDetails.name}</li>
           <li className="flex items-center gap-2"><Puzzle className="w-4 h-4 text-secondary-foreground" /> {addonDetails.name}</li>
           <li className="flex items-center gap-2"><CoffeeIcon className="w-4 h-4 text-secondary-foreground" /> {mugDetails.name}</li>
         </ul>
