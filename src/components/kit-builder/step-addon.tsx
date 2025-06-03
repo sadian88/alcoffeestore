@@ -80,13 +80,13 @@ export function StepAddon({ addon, onChange }: StepAddonProps) {
                   key={variation.value}
                   htmlFor={`addon-variation-${variation.value}`}
                   className={cn(
-                    "flex flex-col items-center justify-center space-y-2 border-2 p-3 rounded-lg cursor-pointer transition-all hover:border-primary",
+                    "flex flex-col items-center justify-center space-y-1 border-2 p-2 rounded-lg cursor-pointer transition-all hover:border-primary", // Changed p-3 to p-2, space-y-2 to space-y-1
                     "aspect-[4/5]", 
                     addon.variation === variation.value ? 'border-primary bg-primary/10 ring-2 ring-primary' : 'border-input-border'
                   )}
                 >
                   <RadioGroupItem value={variation.value} id={`addon-variation-${variation.value}`} className="sr-only" />
-                  <Image src={variation.image} alt={variation.label} width={80} height={100} className="rounded-md object-contain" data-ai-hint={variation.dataAiHint}/>
+                  <Image src={variation.image} alt={variation.label} width={96} height={120} className="rounded-md object-contain" data-ai-hint={variation.dataAiHint}/> {/* Changed width from 80 to 96, height from 100 to 120 */}
                   <span className="text-xs text-center">{variation.label} (${variation.price.toFixed(2)})</span>
                 </Label>
               ))}
