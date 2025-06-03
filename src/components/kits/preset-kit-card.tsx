@@ -92,7 +92,7 @@ export function PresetKitCard({ kit }: PresetKitCardProps) {
     toast({
       title: "¡Kit Prediseñado Agregado! 🎁",
       description: `${kit.name} ha sido añadido a tu carrito.`,
-      className: "bg-primary/10 border-primary text-primary-foreground",
+      className: "bg-primary border-primary text-primary-foreground",
     });
   };
 
@@ -136,3 +136,4 @@ export function PresetKitCard({ kit }: PresetKitCardProps) {
     </Card>
   );
 }
+

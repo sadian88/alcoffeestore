@@ -33,7 +33,7 @@ export default function CarritoPage() {
     toast({
       title: "Carrito Vaciado 🛒💨",
       description: "Todos los artículos han sido eliminados de tu carrito.",
-      className: "bg-secondary border-secondary text-secondary-foreground"
+      className: "bg-accent text-accent-foreground border-accent"
     });
   };
 

@@ -266,7 +266,7 @@ export default function CrearKitPage() {
     };
 
     addToCart(cartItem);
-    toast({ title: "¡Kit Agregado! 💖", description: `${kitName} ha sido añadido a tu carrito.`, className: "bg-primary/10 border-primary text-primary-foreground"});
+    toast({ title: "¡Kit Agregado! 💖", description: `${kitName} ha sido añadido a tu carrito.`, className: "bg-primary border-primary text-primary-foreground"});
     resetKit();
     if (navigateToCart) {
       router.push('/carrito');

@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -29,7 +30,7 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "border bg-background text-foreground",
+        default: "border bg-card text-card-foreground", // Changed from bg-background to bg-card
         destructive:
           "destructive group border-destructive bg-destructive text-destructive-foreground",
       },
