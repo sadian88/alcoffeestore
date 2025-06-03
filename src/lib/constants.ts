@@ -40,10 +40,10 @@ export const MUG_OPTIONS: ConfigurableItem[] = [
     label: 'Taza Ecológica',
     icon: Leaf,
     variations: [
-      { value: 'natural', label: 'Natural', image: 'https://placehold.co/120x120.png', dataAiHint: 'bamboo cup', price: 20000 },
-      { value: 'rosa_pastel', label: 'Rosa Pastel', image: 'https://placehold.co/120x120.png', dataAiHint: 'pastel pink cup', price: 20000 },
-      { value: 'azul_cielo', label: 'Azul Cielo', image: 'https://placehold.co/120x120.png', dataAiHint: 'sky blue cup', price: 20000 },
-      { value: 'verde_menta', label: 'Verde Menta', image: 'https://placehold.co/120x120.png', dataAiHint: 'mint green cup', price: 20000 },
+      { value: 'natural', label: 'Natural', image: 'https://placehold.co/120x120.png?text=Taza+Eco', dataAiHint: 'bamboo cup', price: 20000 },
+      { value: 'rosa_pastel', label: 'Rosa Pastel', image: 'https://placehold.co/120x120.png?text=Taza+Eco', dataAiHint: 'pastel pink cup', price: 20000 },
+      { value: 'azul_cielo', label: 'Azul Cielo', image: 'https://placehold.co/120x120.png?text=Taza+Eco', dataAiHint: 'sky blue cup', price: 20000 },
+      { value: 'verde_menta', label: 'Verde Menta', image: 'https://placehold.co/120x120.png?text=Taza+Eco', dataAiHint: 'mint green cup', price: 20000 },
     ],
   },
   {
@@ -85,8 +85,8 @@ export const ADDON_OPTIONS: ConfigurableItem[] = [
     label: 'Cuchara Clip',
     icon: Paperclip,
     variations: [
-      { value: 'cdorada', label: 'Dorada', image: 'https://placehold.co/120x120.png', dataAiHint: 'gold spoon', price: 17000 },
-      { value: 'cplata', label: 'Plata', image: 'https://placehold.co/120x120.png', dataAiHint: 'silver spoon', price: 17000 }
+      { value: 'cdorada', label: 'Dorada', image: 'https://placehold.co/120x120.png?text=Spoon', dataAiHint: 'gold spoon', price: 17000 },
+      { value: 'cplata', label: 'Plata', image: 'https://placehold.co/120x120.png?text=Spoon', dataAiHint: 'silver spoon', price: 17000 }
     ],
   },
 ];
@@ -96,11 +96,11 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     id: 'preset1',
     name: 'Kit Love',
     description: 'Empieza tu día con dulzura, energía y un toque adorable.',
-    price: 70000, 
+    price: 87000, 
     image: '/img/kits/love.png', 
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'rosa' },
-    cuchara: { type: 'cuchara', variation: 'cdorada' }, // Changed to dorada
+    cuchara: { type: 'cuchara', variation: 'cdorada' }, 
     addon: { type: 'agenda', variation: 'floral' },
     mug: { type: 'ecologica', variation: 'rosa_pastel' },
   },
@@ -108,11 +108,11 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     id: 'preset2',
     name: 'Kit Paz',
     description: 'Un momento de calma y sabor con tu café favorito.',
-    price: 85000, 
+    price: 102000, 
     image: '/img/kits/paz.png', 
     isPreset: true,
     coffee: { size: '150g', packagingColor: 'blanco' },
-    cuchara: { type: 'cuchara', variation: 'plata' }, // Kept as plata
+    cuchara: { type: 'cuchara', variation: 'plata' }, 
     addon: { type: 'cuadro', variation: 'default', cuadroDescription: 'Sueña en Grande ✨' },
     mug: { type: 'termica', variation: 'blanca', termicaMarked: false },
   },
@@ -120,11 +120,11 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     id: 'preset4',
     name: 'Kit Gozo',
     description: 'Una explosión de alegría y sabor para iluminar tus días.',
-    price: 85000,
+    price: 102000,
     image: '/img/kits/gozo.png',
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'blanco' },
-    cuchara: { type: 'cuchara', variation: 'cdorada' }, // Changed to dorada
+    cuchara: { type: 'cuchara', variation: 'cdorada' }, 
     addon: { type: 'agenda', variation: 'estrellas' },
     mug: { type: 'ecologica', variation: 'verde_menta' },
   }
@@ -136,9 +136,9 @@ export const COFFEE_SIZES: { value: '150g' | '250g'; label: string; price: numbe
 ];
 
 export const PACKAGING_COLORS: Omit<ItemVariation, 'price'>[] = [
-  { value: 'blanco', label: 'Blanco Nube ☁️', image: 'https://placehold.co/100x100.png', dataAiHint: 'white packaging' },
-  { value: 'rosa', label: 'Rosa Pastel 🌸', image: 'https://placehold.co/100x100.png', dataAiHint: 'pink packaging' },
-  { value: 'dorado', label: 'Dorado Brillante ✨', image: 'https://placehold.co/100x100.png', dataAiHint: 'gold packaging' },
+  { value: 'blanco', label: 'Blanco Nube ☁️', image: 'https://placehold.co/100x100.png?text=Pack+Blanco', dataAiHint: 'white packaging' },
+  { value: 'rosa', label: 'Rosa Pastel 🌸', image: 'https://placehold.co/100x100.png?text=Pack+Rosa', dataAiHint: 'pink packaging' },
+  { value: 'dorado', label: 'Dorado Brillante ✨', image: 'https://placehold.co/100x100.png?text=Pack+Dorado', dataAiHint: 'gold packaging' },
 ];
 
 
@@ -154,4 +154,5 @@ export const findCoffeeSize = (value: string | undefined) => COFFEE_SIZES.find(c
 
 
     
+
 
