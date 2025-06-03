@@ -105,7 +105,7 @@ export default function Home() {
       <section className="bg-secondary/70 py-10 md:py-16 text-center mt-auto">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-6">
-            ¡Disfruta tu café perfecto!
+            💖 Amor en cada taza. ☕️
           </h2>
         </div>
       </section>
