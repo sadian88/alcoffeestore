@@ -64,10 +64,12 @@ export const ADDON_OPTIONS: ConfigurableItem[] = [
     label: 'Mini Agenda',
     icon: BookOpen,
     variations: [
-      { value: 'miniblanca', label: 'Lineas doradas', image: '/img/productos/miniagendablanca.png', dataAiHint: 'Lineas doradas', price: 12000 },
-      { value: 'mininegra', label: 'Lineas doradas', image: '/img/productos/miniagendanegra.png', dataAiHint: 'Lineas doradas', price: 12000 },
-      { value: 'minirosa', label: 'Lineas doradas', image: '/img/productos/miniagendarosa.png', dataAiHint: 'Lineas doradas', price: 12000 },
-      { value: 'palnner', label: 'Planeador', image: '/img/productos/miniagendarosa.png', dataAiHint: 'Planeador', price: 15000 },
+      { value: 'miniblanca', label: 'Lineas doradas', image: '/img/productos/miniagendablanca.png', dataAiHint: 'white agenda', price: 12000 },
+      { value: 'mininegra', label: 'Lineas doradas', image: '/img/productos/miniagendanegra.png', dataAiHint: 'black agenda', price: 12000 },
+      { value: 'minirosa', label: 'Lineas doradas', image: '/img/productos/miniagendarosa.png', dataAiHint: 'pink agenda', price: 12000 },
+      { value: 'palnner', label: 'Planeador', image: '/img/productos/miniagendarosa.png', dataAiHint: 'planner agenda', price: 15000 },
+      { value: 'floral', label: 'Agenda Floral', image: '/img/productos/miniagendarosa.png', dataAiHint: 'floral agenda', price: 24000 },
+      { value: 'estrellas', label: 'Agenda Estrellas', image: '/img/productos/miniagendablanca.png', dataAiHint: 'stars agenda', price: 39000 },
     ],
   },
   {
@@ -85,8 +87,8 @@ export const ADDON_OPTIONS: ConfigurableItem[] = [
     label: 'Cuchara Clip',
     icon: Paperclip,
     variations: [
-      { value: 'cdorada', label: 'Dorada', image: 'https://placehold.co/120x120.png?text=Spoon', dataAiHint: 'gold spoon', price: 17000 },
-      { value: 'cplata', label: 'Plata', image: 'https://placehold.co/120x120.png?text=Spoon', dataAiHint: 'silver spoon', price: 17000 }
+      { value: 'cdorada', label: 'Dorada', image: 'https://placehold.co/120x120.png?text=Cuchara+Oro', dataAiHint: 'gold spoon', price: 17000 },
+      { value: 'cplata', label: 'Plata', image: 'https://placehold.co/120x120.png?text=Cuchara+Plata', dataAiHint: 'silver spoon', price: 17000 }
     ],
   },
 ];
@@ -101,7 +103,7 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'rosa' },
     cuchara: { type: 'cuchara', variation: 'cdorada' }, 
-    addon: { type: 'agenda', variation: 'floral' },
+    addon: { type: 'agenda', variation: 'floral' }, // Uses new 'floral' variation (price 24000)
     mug: { type: 'ecologica', variation: 'rosa_pastel' },
   },
   {
@@ -112,7 +114,7 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     image: '/img/kits/paz.png', 
     isPreset: true,
     coffee: { size: '150g', packagingColor: 'blanco' },
-    cuchara: { type: 'cuchara', variation: 'plata' }, 
+    cuchara: { type: 'cuchara', variation: 'cplata' }, 
     addon: { type: 'cuadro', variation: 'default', cuadroDescription: 'Sueña en Grande ✨' },
     mug: { type: 'termica', variation: 'blanca', termicaMarked: false },
   },
@@ -125,7 +127,7 @@ export const PRESET_KITS_DATA: PresetKit[] = [
     isPreset: true,
     coffee: { size: '250g', packagingColor: 'blanco' },
     cuchara: { type: 'cuchara', variation: 'cdorada' }, 
-    addon: { type: 'agenda', variation: 'estrellas' },
+    addon: { type: 'agenda', variation: 'estrellas' }, // Uses new 'estrellas' variation (price 39000)
     mug: { type: 'ecologica', variation: 'verde_menta' },
   }
 ];
@@ -154,5 +156,6 @@ export const findCoffeeSize = (value: string | undefined) => COFFEE_SIZES.find(c
 
 
     
+
 
 
