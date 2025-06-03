@@ -98,7 +98,7 @@ export default function CarritoPage() {
 
       {cartItems.length === 0 ? (
         <div className="text-center py-10 flex flex-col items-center">
-           <Image src="https://placehold.co/300x250/E6E6FA/FFB6C1?text=Carrito+Vacio+:(" alt="Carrito vacío" width={300} height={250} className="rounded-lg mb-6 shadow-md" data-ai-hint="empty cart" />
+           <Image src="https://placehold.co/300x250/F8BFC9/4A3B31?text=Carrito+Vacio+:(" alt="Carrito vacío" width={300} height={250} className="rounded-lg mb-6 shadow-md" data-ai-hint="empty cart" />
           <p className="text-xl text-muted-foreground mb-6">Tu carrito está esperando ser llenado de magia.</p>
           <div className="flex gap-4">
             <Link href="/crear-kit" passHref>
@@ -131,9 +131,6 @@ export default function CarritoPage() {
                   <span>Total Estimado:</span>
                   <span>${totalPrice.toFixed(2)}</span>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Al finalizar, te guiaremos para enviar tu pedido por WhatsApp al <strong>315 304 2476</strong>, donde coordinaremos el envío.
-                </p>
               </CardContent>
               <CardFooter className="flex flex-col space-y-3">
                 <Button onClick={handleFinalizeOrder} size="lg" className="w-full font-semibold">
