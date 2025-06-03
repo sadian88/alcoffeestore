@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -68,6 +69,7 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        'link-hover-blue': 'hsl(var(--link-hover-blue))', // Added for header link hover
       },
       borderRadius: {
         lg: 'var(--radius)',

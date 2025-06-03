@@ -55,6 +55,9 @@ body {
     --sidebar-accent-foreground: 329 56% 45%; /* Darker Pink */
     --sidebar-border: 185 57% 88%; /* Lighter Cyan border - #D6F0F2 */
     --sidebar-ring: 329 56% 66%; /* Medium Pink */
+
+    /* Custom link hover color */
+    --link-hover-blue: 195 53% 53%; /* Adjusted blue for link hover */
   }
 
   .dark {
@@ -96,6 +99,9 @@ body {
     --sidebar-accent-foreground: 349 83% 86%; /* Light Pink */
     --sidebar-border: 102 15% 20%;
     --sidebar-ring: 329 60% 70%;
+
+    /* Custom link hover color for dark mode */
+    --link-hover-blue: 195 53% 63%; /* Lighter blue for dark mode link hover */
   }
 }
 

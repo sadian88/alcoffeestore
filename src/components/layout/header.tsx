@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { ShoppingCart, Heart } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useIsClient } from '@/hooks/use-is-client';
@@ -15,30 +15,33 @@ export function Header() {
   const itemCount = isClient ? cartItems.reduce((count, item) => count + (item.quantity || 0), 0) : 0;
 
   return (
-    <header className="bg-secondary/70 shadow-sm sticky top-0 z-50 backdrop-blur-md">
+    <header className="bg-card shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
         <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2 text-primary hover:opacity-80 transition-opacity">
-            {/* Replace Heart icon with Logo component */}
-            <Logo className="h-10 w-10 text-primary fill-primary/50" />
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Logo className="h-10 w-auto text-primary fill-primary/50" /> {/* Adjusted width to auto for better scaling */}
           </Link>
-          <nav className="hidden md:flex items-center gap-4">
-            <Link href="/crear-kit" passHref>
-              <Button variant="ghost" className="text-sm font-medium text-primary-foreground hover:bg-primary/10 hover:text-primary">
+          <nav className="hidden md:flex items-center gap-1">
+            <Link href="/crear-kit" passHref legacyBehavior>
+              <a className="text-primary hover:text-link-hover-blue text-sm font-medium px-3 py-2 rounded-md transition-colors">
                 Arma tu kit
-              </Button>
+              </a>
             </Link>
-            <Link href="/kits-predisenados" passHref>
-              <Button variant="ghost" className="text-sm font-medium text-primary-foreground hover:bg-primary/10 hover:text-primary">
+            <Link href="/kits-predisenados" passHref legacyBehavior>
+              <a className="text-primary hover:text-link-hover-blue text-sm font-medium px-3 py-2 rounded-md transition-colors">
                 Kits disponibles
-              </Button>
+              </a>
             </Link>
           </nav>
         </div>
         
         <div className="flex items-center">
           <Link href="/carrito" passHref>
-            <Button variant="ghost" size="icon" className="relative text-primary hover:text-primary/80 hover:bg-primary/10">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative text-primary hover:text-link-hover-blue hover:bg-transparent"
+            >
               <ShoppingCart className="w-6 h-6" />
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
