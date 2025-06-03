@@ -19,8 +19,8 @@ export function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2 text-primary hover:opacity-80 transition-opacity">
-            {/* Using a simple heart icon, logo can be re-added if desired */}
-            <Heart className="h-6 w-6 text-primary fill-primary/20" />
+            {/* Replace Heart icon with Logo component */}
+            <Logo className="h-10 w-10 text-primary fill-primary/50" />
           </Link>
           <nav className="hidden md:flex items-center gap-4">
             <Link href="/crear-kit" passHref>

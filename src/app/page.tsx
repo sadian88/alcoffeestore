@@ -20,12 +20,9 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-100 via-purple-100 to-rose-100 text-foreground">
       {/* Main content area */}
-      <main className="flex-grow container mx-auto px-4 py-8 md:py-12">
+      <main className="flex-grow py-8 md:py-12"> {/* MODIFIED HERE: Removed container, mx-auto, px-4 */}
         {/* Hero Section */}
         <section className="text-center pt-8 pb-12 md:pt-12 md:pb-16 relative">
-          <div className="absolute top-10 right-10 md:top-16 md:right-24 z-0">
-            <SmileyFace />
-          </div>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-white mb-4" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.1)'}}>
             Diseño <br className="sm:hidden"/>Encantador
           </h1>
@@ -35,7 +32,7 @@ export default function Home() {
         </section>
 
         {/* CTA Cards Section */}
-        <section className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto mb-12 md:mb-20">
+        <section className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto mb-12 md:mb-20 px-4">
           <Link href="/crear-kit" passHref>
             <Card className="bg-secondary/80 hover:shadow-xl transition-shadow duration-300 ease-in-out transform hover:-translate-y-1 cursor-pointer rounded-3xl overflow-hidden p-6 text-center">
               <CardContent className="flex flex-col items-center justify-center space-y-4">
@@ -74,7 +71,7 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 mb-12 md:mb-20 max-w-5xl mx-auto">
+        <section className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 mb-12 md:mb-20 max-w-5xl mx-auto px-4">
           <div className="w-1/3 md:w-1/4 flex justify-center">
             <Image
               src="https://placehold.co/200x250/FFFFFF/FFB6C1?text=Unicorn"
@@ -123,3 +120,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
