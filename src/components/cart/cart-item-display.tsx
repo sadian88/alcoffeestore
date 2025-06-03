@@ -25,7 +25,7 @@ function ComponentDetailDisplay({ component }: { component: CartItemComponentDet
         {icon}
         {component.name}
       </span>
-      <span className="font-medium">${formatPrice(component.price)}</span>
+      <span className="font-semibold text-sm">${formatPrice(component.price)}</span>
     </div>
   );
 }
@@ -72,3 +72,4 @@ export function CartItemDisplay({ item, onRemove }: CartItemDisplayProps) {
     </Card>
   );
 }
+
