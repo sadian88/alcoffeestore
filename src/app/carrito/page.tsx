@@ -3,18 +3,19 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react'; // Added import
+import { useState } from 'react';
 import { useCartStore } from '@/hooks/use-cart-store';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CartItemDisplay } from '@/components/cart/cart-item-display';
-import { Checkbox } from '@/components/ui/checkbox'; // Added import
-import { Input } from '@/components/ui/input'; // Added import
-import { Label } from '@/components/ui/label'; // Added import
-import { ShoppingCart, Trash2, Send, Sparkles, ArrowLeft, Gift } from 'lucide-react'; // Added Gift
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ShoppingCart, Trash2, Send, Sparkles, ArrowLeft, Gift } from 'lucide-react';
 import Image from 'next/image';
 import type { CartItem, CartItemComponentDetail } from '@/types';
+import { formatPrice } from '@/lib/utils';
 
 export default function CarritoPage() {
   const { cartItems, removeFromCart, clearCart, getCartItemCount, isCartLoaded } = useCartStore();
@@ -41,11 +42,11 @@ export default function CarritoPage() {
   const itemCount = getCartItemCount();
 
   const formatComponentForWhatsApp = (component: CartItemComponentDetail): string => {
-    return `    - ${component.name}: $${component.price.toFixed(2)}`;
+    return `    - ${component.name}: $${formatPrice(component.price)}`;
   };
 
   const formatItemForWhatsApp = (item: CartItem): string => {
-    let message = `\n*${item.displayName}* - $${item.totalPrice.toFixed(2)}`;
+    let message = `\n*${item.displayName}* - $${formatPrice(item.totalPrice)}`;
     if (item.cartItemType === 'kit' && item.components.length > 1) {
       message += "\n  Componentes:";
       item.components.forEach(comp => {
@@ -67,7 +68,7 @@ export default function CarritoPage() {
 
     const introMessage = "¡Hola alCoffee! 👋 Quisiera realizar el siguiente pedido:\n";
     const itemsMessage = cartItems.map(item => formatItemForWhatsApp(item)).join("\n");
-    const totalMessage = `\n\n--- TOTAL DEL PEDIDO ---\nTotal Estimado: $${totalPrice.toFixed(2)}`;
+    const totalMessage = `\n\n--- TOTAL DEL PEDIDO ---\nTotal Estimado: $${formatPrice(totalPrice)}`;
     
     let giftCardMessage = "";
     if (includeGiftCard && (giftCardFrom.trim() || giftCardTo.trim())) {
@@ -88,8 +89,6 @@ export default function CarritoPage() {
 
     window.open(whatsappUrl, '_blank');
     
-    // Consider clearing cart and gift card fields after confirmation from user
-    // For now, redirecting. State will be lost on navigation.
     router.push('/pedido-enviado');
   };
 
@@ -142,7 +141,7 @@ export default function CarritoPage() {
             <Card className="sticky top-24 shadow-lg">
               <CardHeader>
                 <CardTitle className="text-2xl font-headline">Resumen del Pedido</CardTitle>
-                <p className="text-xs text-muted-foreground pt-1">
+                 <p className="text-xs text-muted-foreground pt-1">
                   Si deseas agregar algo adicional al kit escríbenos un mensaje adicional al whatsapp.
                 </p>
               </CardHeader>
@@ -153,7 +152,7 @@ export default function CarritoPage() {
                 </div>
                 <div className="flex justify-between text-xl font-bold text-primary">
                   <span>Total Estimado:</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span>${formatPrice(totalPrice)}</span>
                 </div>
 
                 {/* Gift Card Section */}
@@ -215,4 +214,3 @@ export default function CarritoPage() {
     </div>
   );
 }
-

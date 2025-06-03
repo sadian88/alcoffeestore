@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MUG_OPTIONS, THERMAL_MUG_CUSTOMIZATION_OPTIONS, findOption } from '@/lib/constants';
 import { cn } from '@/lib/utils';
-import { Coffee as CoffeeIcon, Leaf, Rocket } from 'lucide-react'; 
+import { Coffee as CoffeeIcon } from 'lucide-react'; 
+import { formatPrice } from '@/lib/utils';
 
 interface StepMugProps {
   mug: MugSelection;
@@ -89,7 +90,7 @@ export function StepMug({ mug, onChange }: StepMugProps) {
                   <RadioGroupItem value={variation.value} id={`mug-variation-${variation.value}`} className="sr-only" />
                   <Image src={variation.image} alt={variation.label} width={80} height={80} className="rounded-md object-contain" data-ai-hint={variation.dataAiHint} />
                   <span className="text-xs text-center h-8 flex items-center justify-center">
-                    {variation.label} (${variation.price.toFixed(2)})
+                    {variation.label} (${formatPrice(variation.price)})
                   </span>
                 </Label>
               ))}
@@ -102,7 +103,7 @@ export function StepMug({ mug, onChange }: StepMugProps) {
             <Label className="text-lg font-medium">
               Personalización {selectedMugTypeConfig.label}:
               {selectedMugTypeConfig.personalizationFee && selectedMugTypeConfig.personalizationFee > 0 && (
-                <span className="text-xs text-muted-foreground font-normal"> (Costo adicional por personalización: ${selectedMugTypeConfig.personalizationFee.toFixed(2)})</span>
+                <span className="text-xs text-muted-foreground font-normal"> (Costo adicional por personalización: ${formatPrice(selectedMugTypeConfig.personalizationFee)})</span>
               )}
             </Label>
             <RadioGroup

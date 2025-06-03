@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { COFFEE_SIZES, PACKAGING_COLORS } from '@/lib/constants';
 import { Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatPrice } from '@/lib/utils';
 
 interface StepCoffeeProps {
   coffee: CoffeeSelection;
@@ -44,7 +45,7 @@ export function StepCoffee({ coffee, onChange }: StepCoffeeProps) {
                 )}
               >
                 <RadioGroupItem value={size.value} id={`size-${size.value}`} />
-                <span>{size.label} (${size.price.toFixed(2)})</span>
+                <span>{size.label} (${formatPrice(size.price)})</span>
               </Label>
             ))}
           </RadioGroup>
@@ -84,4 +85,3 @@ export function StepCoffee({ coffee, onChange }: StepCoffeeProps) {
     </Card>
   );
 }
-

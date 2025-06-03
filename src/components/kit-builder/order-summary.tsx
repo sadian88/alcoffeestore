@@ -16,6 +16,7 @@ import {
   findPackagingColor,
   findCoffeeSize
 } from '@/lib/constants';
+import { formatPrice } from '@/lib/utils';
 
 interface OrderSummaryProps {
   kitConfig: KitConfig;
@@ -87,7 +88,7 @@ export function OrderSummary({
         {!isKitEmpty && (
           <>
             <div className="space-y-1 p-3 bg-secondary/30 rounded-md">
-              <h4 className="font-semibold flex items-center gap-2"><Package className="w-4 h-4 text-secondary-foreground"/>Café: ${coffeePrice.toFixed(2)}</h4>
+              <h4 className="font-semibold flex items-center gap-2"><Package className="w-4 h-4 text-secondary-foreground"/>Café: ${formatPrice(coffeePrice)}</h4>
               <p>Tamaño: <span className="font-medium">{getCoffeeSizeLabel(kitConfig.coffee.size) || '...'}</span></p>
               <p>Empaque: <span className="font-medium">{getPackagingColorLabel(kitConfig.coffee.packagingColor) || '...'}</span></p>
               {currentStep !== 1 && <Button variant="link" size="sm" className="p-0 h-auto text-xs" onClick={() => navigateToStep(1)}>Editar Café</Button>}
@@ -97,7 +98,7 @@ export function OrderSummary({
             </div>
 
             <div className="space-y-1 p-3 bg-secondary/30 rounded-md">
-              <h4 className="font-semibold flex items-center gap-2"><Puzzle className="w-4 h-4 text-secondary-foreground"/>Complemento: ${addonPrice.toFixed(2)}</h4>
+              <h4 className="font-semibold flex items-center gap-2"><Puzzle className="w-4 h-4 text-secondary-foreground"/>Complemento: ${formatPrice(addonPrice)}</h4>
               <p>Selección: <span className="font-medium">{getDisplayableSelection('addon')}</span></p>
               {kitConfig.addon.type === 'cuadro' && kitConfig.addon.cuadroDescription && (
                 <p>Descripción Cuadro: <span className="font-medium italic">"{kitConfig.addon.cuadroDescription}"</span></p>
@@ -109,7 +110,7 @@ export function OrderSummary({
             </div>
 
             <div className="space-y-1 p-3 bg-secondary/30 rounded-md">
-              <h4 className="font-semibold flex items-center gap-2"><CoffeeIcon className="w-4 h-4 text-secondary-foreground"/>Taza: ${mugPrice.toFixed(2)}</h4>
+              <h4 className="font-semibold flex items-center gap-2"><CoffeeIcon className="w-4 h-4 text-secondary-foreground"/>Taza: ${formatPrice(mugPrice)}</h4>
               <p>Selección: <span className="font-medium">{getDisplayableSelection('mug')}</span></p>
               {kitConfig.mug.type === 'termica' && (
                 <>
@@ -130,7 +131,7 @@ export function OrderSummary({
                     <DollarSign className="w-5 h-5"/>Precio Total del Kit:
                 </h4>
                 <p className="text-2xl font-bold text-accent">
-                    ${totalKitPrice.toFixed(2)}
+                    ${formatPrice(totalKitPrice)}
                 </p>
             </div>
           </>
